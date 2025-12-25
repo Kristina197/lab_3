@@ -1,0 +1,3700 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>main: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">nstu_lab3_3/cmd/main/main.go (0.0%)</option>
+				
+				<option value="file1">nstu_lab3_3/internal/structs/Array.go (91.2%)</option>
+				
+				<option value="file2">nstu_lab3_3/internal/structs/ChainingHashMap.go (87.4%)</option>
+				
+				<option value="file3">nstu_lab3_3/internal/structs/DoublyLinkedList.go (92.4%)</option>
+				
+				<option value="file4">nstu_lab3_3/internal/structs/FullBinaryTree.go (86.6%)</option>
+				
+				<option value="file5">nstu_lab3_3/internal/structs/OpenAddressingHashMap.go (88.9%)</option>
+				
+				<option value="file6">nstu_lab3_3/internal/structs/Queue.go (88.9%)</option>
+				
+				<option value="file7">nstu_lab3_3/internal/structs/SinglyLinkedList.go (92.0%)</option>
+				
+				<option value="file8">nstu_lab3_3/internal/structs/Stack.go (91.5%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+func main() {<span class="cov0" title="0">
+
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package structs
+
+import (
+        "bytes"
+        "encoding/binary"
+        "encoding/json"
+        "fmt"
+        "io"
+        "os"
+)
+
+type Array struct {
+        Data     []string `json:"data"`
+        Size     int      `json:"size"`
+        Capacity int      `json:"capacity,omitempty"`
+}
+
+func NewArray() *Array <span class="cov8" title="1">{
+        return &amp;Array{
+                Data:     make([]string, 10),
+                Size:     0,
+                Capacity: 10,
+        }
+}</span>
+
+func NewArrayWithCapacity(cap int) *Array <span class="cov8" title="1">{
+        return &amp;Array{
+                Data:     make([]string, cap),
+                Size:     0,
+                Capacity: cap,
+        }
+}</span>
+
+func (a *Array) doubleCapacity() <span class="cov8" title="1">{
+        newCapacity := a.Capacity * 2
+        if newCapacity == 0 </span><span class="cov8" title="1">{
+                newCapacity = 1
+        }</span>
+
+        <span class="cov8" title="1">newData := make([]string, newCapacity)
+        copy(newData, a.Data[:a.Size])
+        a.Data = newData
+        a.Capacity = newCapacity</span>
+}
+
+func (a *Array) Cap() int <span class="cov8" title="1">{
+        return a.Capacity
+}</span>
+
+func (a *Array) Length() int <span class="cov8" title="1">{
+        return a.Size
+}</span>
+
+func (a *Array) PushBack(value string) bool <span class="cov8" title="1">{
+        if a.Size &gt;= a.Capacity </span><span class="cov8" title="1">{
+                a.doubleCapacity()
+        }</span>
+        <span class="cov8" title="1">a.Data[a.Size] = value
+        a.Size++
+        return true</span>
+}
+
+func (a *Array) PushByIndex(value string, index int) bool <span class="cov8" title="1">{
+        if index &gt; a.Size </span><span class="cov8" title="1">{
+                return false
+        }</span>
+
+        <span class="cov8" title="1">if a.Size &gt;= a.Capacity </span><span class="cov8" title="1">{
+                a.doubleCapacity()
+        }</span>
+
+        <span class="cov8" title="1">for i := a.Size; i &gt; index; i-- </span><span class="cov8" title="1">{
+                a.Data[i] = a.Data[i-1]
+        }</span>
+
+        <span class="cov8" title="1">a.Data[index] = value
+        a.Size++
+        return true</span>
+}
+
+func (a *Array) GetByIndex(index int) string <span class="cov8" title="1">{
+        if index &gt;= a.Size || index &lt; 0 </span><span class="cov8" title="1">{
+                return ""
+        }</span>
+        <span class="cov8" title="1">return a.Data[index]</span>
+}
+
+func (a *Array) DeleteByIndex(index int) bool <span class="cov8" title="1">{
+        if index &gt;= a.Size || index &lt; 0 </span><span class="cov8" title="1">{
+                return false
+        }</span>
+
+        <span class="cov8" title="1">for i := index; i &lt; a.Size-1; i++ </span><span class="cov8" title="1">{
+                a.Data[i] = a.Data[i+1]
+        }</span>
+        <span class="cov8" title="1">a.Size--
+        return true</span>
+}
+
+func (a *Array) SwapByIndex(value string, index int) bool <span class="cov8" title="1">{
+        if index &gt;= a.Size || index &lt; 0 </span><span class="cov8" title="1">{
+                return false
+        }</span>
+        <span class="cov8" title="1">a.Data[index] = value
+        return true</span>
+}
+
+func (a *Array) Print() <span class="cov8" title="1">{
+        for i := 0; i &lt; a.Size; i++ </span><span class="cov8" title="1">{
+                fmt.Print(a.Data[i])
+                if i &lt; (a.Size - 1) </span><span class="cov8" title="1">{
+                        fmt.Print(" ")
+                }</span>
+        }
+        <span class="cov8" title="1">fmt.Println()</span>
+}
+
+// MarshalJSON реализует интерфейс json.Marshaler
+func (a *Array) MarshalJSON() ([]byte, error) <span class="cov8" title="1">{
+        type Alias Array
+        return json.Marshal(&amp;struct {
+                *Alias
+                ActualData []string `json:"actual_data"`
+        }{
+                Alias:      (*Alias)(a),
+                ActualData: a.Data[:a.Size],
+        })
+}</span>
+
+// UnmarshalJSON реализует интерфейс json.Unmarshaler
+func (a *Array) UnmarshalJSON(data []byte) error <span class="cov8" title="1">{
+        type Alias Array
+        aux := &amp;struct {
+                *Alias
+                ActualData []string `json:"actual_data"`
+        }{
+                Alias: (*Alias)(a),
+        }
+
+        if err := json.Unmarshal(data, &amp;aux); err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">a.Data = make([]string, a.Capacity)
+        copy(a.Data, aux.ActualData)
+        a.Size = len(aux.ActualData)
+
+        return nil</span>
+}
+
+// ToJSON сериализует массив в JSON строку
+func (a *Array) ToJSON() (string, error) <span class="cov8" title="1">{
+        bytes, err := json.Marshal(a)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">return string(bytes), nil</span>
+}
+
+// FromJSON десериализует JSON строку в массив
+func (a *Array) FromJSON(jsonStr string) error <span class="cov8" title="1">{
+        return json.Unmarshal([]byte(jsonStr), a)
+}</span>
+
+// SaveToJSON сохраняет в JSON файл
+func (a *Array) SaveToJSON(filename string) error <span class="cov8" title="1">{
+        file, err := os.Create(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">defer file.Close()
+
+        encoder := json.NewEncoder(file)
+        encoder.SetIndent("", "    ")
+        return encoder.Encode(a)</span>
+}
+
+// LoadFromJSON загружает данные из JSON
+func (a *Array) LoadFromJSON(filename string) error <span class="cov8" title="1">{
+        file, err := os.Open(filename)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        <span class="cov8" title="1">defer file.Close()
+
+        decoder := json.NewDecoder(file)
+        return decoder.Decode(a)</span>
+}
+
+// ToBinary сериализует массив в бинарный формат
+func (a *Array) ToBinary() ([]byte, error) <span class="cov8" title="1">{
+        // Используем LittleEndian для согласованности (выбор BigEndian также возможен)
+        var buf bytes.Buffer
+
+        // 1. Записываем фактический размер (Size) массива (как int32 или int64 для безопасности)
+        size := int32(a.Size)
+        if err := binary.Write(&amp;buf, binary.LittleEndian, size); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("ошибка записи размера массива: %w", err)
+        }</span>
+
+        // 2. Записываем каждую строку: сначала ее длину, затем байты строки.
+        <span class="cov8" title="1">for i := 0; i &lt; a.Size; i++ </span><span class="cov8" title="1">{
+                strBytes := []byte(a.Data[i])
+                strLen := int32(len(strBytes))
+
+                // Записываем длину строки
+                if err := binary.Write(&amp;buf, binary.LittleEndian, strLen); err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("ошибка записи длины строки %d: %w", i, err)
+                }</span>
+
+                // Записываем байты строки
+                <span class="cov8" title="1">if _, err := buf.Write(strBytes); err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("ошибка записи данных строки %d: %w", i, err)
+                }</span>
+        }
+
+        <span class="cov8" title="1">return buf.Bytes(), nil</span>
+}
+
+// FromBinary десериализует массив из бинарного формата
+func (a *Array) FromBinary(data []byte) error <span class="cov8" title="1">{
+        buf := bytes.NewReader(data)
+
+        // 1. Считываем фактический размер (Size) массива
+        var size int32
+        if err := binary.Read(buf, binary.LittleEndian, &amp;size); err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("ошибка чтения размера массива: %w", err)
+        }</span>
+
+        // Обновляем Size и создаем новый слайс Data
+        <span class="cov8" title="1">a.Size = int(size)
+        // Устанавливаем Capacity равным Size для начала
+        a.Capacity = a.Size
+        if a.Capacity == 0 </span><span class="cov8" title="1">{
+                a.Capacity = 10 // или любой другой разумный минимальный размер
+        }</span>
+        <span class="cov8" title="1">a.Data = make([]string, a.Capacity)
+
+        // 2. Считываем каждую строку
+        for i := 0; i &lt; a.Size; i++ </span><span class="cov8" title="1">{
+                // Считываем длину строки
+                var strLen int32
+                if err := binary.Read(buf, binary.LittleEndian, &amp;strLen); err != nil </span><span class="cov8" title="1">{
+                        if err == io.EOF </span><span class="cov8" title="1">{
+                                return fmt.Errorf("неожиданный конец данных при чтении длины строки %d. Ожидалось %d строк", i, a.Size)
+                        }</span>
+                        <span class="cov0" title="0">return fmt.Errorf("ошибка чтения длины строки %d: %w", i, err)</span>
+                }
+
+                // Считываем байты строки
+                <span class="cov8" title="1">strBytes := make([]byte, strLen)
+                if _, err := io.ReadFull(buf, strBytes); err != nil </span><span class="cov0" title="0">{
+                        if err == io.EOF || err == io.ErrUnexpectedEOF </span><span class="cov0" title="0">{
+                                return fmt.Errorf("недостаточно данных для чтения строки %d длиной %d байт", i, strLen)
+                        }</span>
+                        <span class="cov0" title="0">return fmt.Errorf("ошибка чтения данных строки %d: %w", i, err)</span>
+                }
+
+                <span class="cov8" title="1">a.Data[i] = string(strBytes)</span>
+        }
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (a *Array) SaveToBinary(filename string) error <span class="cov8" title="1">{
+        data, err := a.ToBinary()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return os.WriteFile(filename, data, 0644)</span>
+}
+
+// LoadFromBinary загружает массив из бинарного файла
+func (a *Array) LoadFromBinary(filename string) error <span class="cov8" title="1">{
+        data, err := os.ReadFile(filename)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return a.FromBinary(data)</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package structs
+
+import (
+        "bytes"
+        "encoding/binary"
+        "encoding/json"
+        "fmt"
+        "hash/fnv"
+        "io"
+        "os"
+        "strings"
+)
+
+type HashNode struct {
+        key   string
+        value string
+        next  *HashNode
+}
+
+func NewHashNode(key string, value string) *HashNode <span class="cov8" title="1">{
+        return &amp;HashNode{
+                key:   key,
+                value: value,
+                next:  nil,
+        }
+}</span>
+
+type ChainingHash struct {
+        buckets  []*HashNode
+        size     int
+        capacity int
+}
+
+func NewChainingHash() *ChainingHash <span class="cov8" title="1">{
+        capacity := 10
+        return &amp;ChainingHash{
+                buckets:  make([]*HashNode, capacity),
+                size:     0,
+                capacity: capacity,
+        }
+}</span>
+
+func NewChainingHashWithCapacity(cap int) *ChainingHash <span class="cov8" title="1">{
+        if cap &lt;= 0 </span><span class="cov8" title="1">{
+                cap = 10
+        }</span>
+        <span class="cov8" title="1">return &amp;ChainingHash{
+                buckets:  make([]*HashNode, cap),
+                size:     0,
+                capacity: cap,
+        }</span>
+}
+
+func (h *ChainingHash) hashFunc(key string) uint32 <span class="cov8" title="1">{
+        hasher := fnv.New32a()
+
+        keyStr := fmt.Sprintf("%v", key)
+        hasher.Write([]byte(keyStr))
+
+        return hasher.Sum32() % uint32(h.capacity)
+}</span>
+
+func (h *ChainingHash) Put(key, value string) bool <span class="cov8" title="1">{
+        hash := h.hashFunc(key)
+        curr := h.buckets[hash]
+
+        for curr != nil </span><span class="cov8" title="1">{
+                if curr.key == key </span><span class="cov8" title="1">{
+                        curr.value = value
+                        return true
+                }</span>
+                <span class="cov8" title="1">curr = curr.next</span>
+        }
+
+        <span class="cov8" title="1">newNode := NewHashNode(key, value)
+        newNode.next = h.buckets[hash]
+        h.buckets[hash] = newNode
+        h.size++
+
+        return true</span>
+}
+
+func (h *ChainingHash) Get(key string) (string, bool) <span class="cov8" title="1">{
+        hash := h.hashFunc(key)
+        curr := h.buckets[hash]
+
+        for curr != nil </span><span class="cov8" title="1">{
+                if curr.key == key </span><span class="cov8" title="1">{
+                        return curr.value, true
+                }</span>
+                <span class="cov8" title="1">curr = curr.next</span>
+        }
+
+        <span class="cov8" title="1">return "", false</span>
+}
+
+func (h *ChainingHash) Remove(key string) bool <span class="cov8" title="1">{
+        hash := h.hashFunc(key)
+        curr := h.buckets[hash]
+        var prev *HashNode = nil
+
+        for curr != nil </span><span class="cov8" title="1">{
+                if curr.key == key </span><span class="cov8" title="1">{
+                        if prev == nil </span><span class="cov8" title="1">{
+                                h.buckets[hash] = curr.next
+                        }</span> else<span class="cov8" title="1"> {
+                                prev.next = curr.next
+                        }</span>
+                        <span class="cov8" title="1">h.size--
+                        return true</span>
+                }
+                <span class="cov8" title="1">prev = curr
+                curr = curr.next</span>
+        }
+        <span class="cov8" title="1">return false</span>
+}
+
+func (h *ChainingHash) Contains(key string) bool <span class="cov8" title="1">{
+        _, found := h.Get(key)
+        return found
+}</span>
+
+func (h *ChainingHash) Size() int <span class="cov8" title="1">{
+        return h.size
+}</span>
+
+func (h *ChainingHash) IsEmpty() bool <span class="cov8" title="1">{
+        return h.size == 0
+}</span>
+
+func (h *ChainingHash) Capacity() int <span class="cov8" title="1">{
+        return h.capacity
+}</span>
+
+func (h *ChainingHash) Clear() <span class="cov8" title="1">{
+        for i := 0; i &lt; h.capacity; i++ </span><span class="cov8" title="1">{
+                h.buckets[i] = nil
+        }</span>
+        <span class="cov8" title="1">h.size = 0</span>
+}
+
+func (h *ChainingHash) Keys() []string <span class="cov8" title="1">{
+        keys := make([]string, 0, h.size)
+        for i := 0; i &lt; h.capacity; i++ </span><span class="cov8" title="1">{
+                curr := h.buckets[i]
+                for curr != nil </span><span class="cov8" title="1">{
+                        keys = append(keys, curr.key)
+                        curr = curr.next
+                }</span>
+        }
+        <span class="cov8" title="1">return keys</span>
+}
+
+func (h *ChainingHash) Values() []string <span class="cov8" title="1">{
+        values := make([]string, 0, h.size)
+        for i := 0; i &lt; h.capacity; i++ </span><span class="cov8" title="1">{
+                curr := h.buckets[i]
+                for curr != nil </span><span class="cov8" title="1">{
+                        values = append(values, curr.value)
+                        curr = curr.next
+                }</span>
+        }
+        <span class="cov8" title="1">return values</span>
+}
+
+func (h *ChainingHash) Print() <span class="cov8" title="1">{
+        for i := 0; i &lt; h.capacity; i++ </span><span class="cov8" title="1">{
+                fmt.Printf("[%d]: ", i)
+                curr := h.buckets[i]
+                var pairs []string
+                for curr != nil </span><span class="cov8" title="1">{
+                        pairs = append(pairs, fmt.Sprintf("{%v: %v}", curr.key, curr.value))
+                        curr = curr.next
+                }</span>
+                <span class="cov8" title="1">if len(pairs) == 0 </span><span class="cov8" title="1">{
+                        fmt.Println("null")
+                }</span> else<span class="cov8" title="1"> {
+                        fmt.Printf("%s -&gt; null\n", strings.Join(pairs, " -&gt; "))
+                }</span>
+        }
+}
+
+func (h *ChainingHash) String() string <span class="cov8" title="1">{
+        var builder strings.Builder
+        builder.WriteString(fmt.Sprintf("HashTable (size: %d, capacity: %d)\n", h.size, h.capacity))
+
+        for i := 0; i &lt; h.capacity; i++ </span><span class="cov8" title="1">{
+                builder.WriteString(fmt.Sprintf("[%d]: ", i))
+                curr := h.buckets[i]
+                var pairs []string
+                for curr != nil </span><span class="cov8" title="1">{
+                        pairs = append(pairs, fmt.Sprintf("{%v: %v}", curr.key, curr.value))
+                        curr = curr.next
+                }</span>
+                <span class="cov8" title="1">if len(pairs) == 0 </span><span class="cov8" title="1">{
+                        builder.WriteString("null\n")
+                }</span> else<span class="cov8" title="1"> {
+                        builder.WriteString(fmt.Sprintf("%s -&gt; null\n", strings.Join(pairs, " -&gt; ")))
+                }</span>
+        }
+        <span class="cov8" title="1">return builder.String()</span>
+}
+
+func (h *ChainingHash) LoadFactor() float64 <span class="cov8" title="1">{
+        return float64(h.size) / float64(h.capacity)
+}</span>
+
+func (h *ChainingHash) Rehash(newCapacity int) <span class="cov8" title="1">{
+        if newCapacity &lt;= 0 </span><span class="cov8" title="1">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">oldBuckets := h.buckets
+        oldCapacity := h.capacity
+
+        h.buckets = make([]*HashNode, newCapacity)
+        h.capacity = newCapacity
+        h.size = 0
+
+        for i := 0; i &lt; oldCapacity; i++ </span><span class="cov8" title="1">{
+                curr := oldBuckets[i]
+                for curr != nil </span><span class="cov8" title="1">{
+                        h.Put(curr.key, curr.value)
+                        curr = curr.next
+                }</span>
+        }
+}
+
+func (h *ChainingHash) AutoRehash(threshold float64) <span class="cov8" title="1">{
+        if h.LoadFactor() &gt; threshold </span><span class="cov8" title="1">{
+                newCapacity := h.capacity * 2
+                h.Rehash(newCapacity)
+        }</span>
+}
+
+// СЕРИАЛИЗАЦИЯ / ДЕСЕРИАЛИЗАЦИЯ
+
+// EntryJSON вспомогательная структура для JSON сериализации
+type EntryJSON struct {
+        Key   string `json:"key"`
+        Value string `json:"value"`
+}
+
+// MarshalJSON реализует интерфейс json.Marshaler
+func (h *ChainingHash) MarshalJSON() ([]byte, error) <span class="cov8" title="1">{
+        type HashTableJSON struct {
+                Capacity   int         `json:"capacity"`
+                Size       int         `json:"size"`
+                Entries    []EntryJSON `json:"entries"`
+                LoadFactor float64     `json:"load_factor"`
+        }
+
+        // Собираем все пары ключ-значение
+        entries := make([]EntryJSON, 0, h.size)
+        for i := 0; i &lt; h.capacity; i++ </span><span class="cov8" title="1">{
+                curr := h.buckets[i]
+                for curr != nil </span><span class="cov8" title="1">{
+                        entries = append(entries, EntryJSON{
+                                Key:   curr.key,
+                                Value: curr.value,
+                        })
+                        curr = curr.next
+                }</span>
+        }
+
+        <span class="cov8" title="1">hashTableJSON := HashTableJSON{
+                Capacity:   h.capacity,
+                Size:       h.size,
+                Entries:    entries,
+                LoadFactor: h.LoadFactor(),
+        }
+
+        return json.Marshal(hashTableJSON)</span>
+}
+
+// UnmarshalJSON реализует интерфейс json.Unmarshaler
+func (h *ChainingHash) UnmarshalJSON(data []byte) error <span class="cov8" title="1">{
+        type HashTableJSON struct {
+                Capacity   int         `json:"capacity"`
+                Size       int         `json:"size"`
+                Entries    []EntryJSON `json:"entries"`
+                LoadFactor float64     `json:"load_factor"`
+        }
+
+        var hashTableJSON HashTableJSON
+        if err := json.Unmarshal(data, &amp;hashTableJSON); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        // Восстанавливаем хеш-таблицу
+        <span class="cov8" title="1">if hashTableJSON.Capacity &gt; 0 </span><span class="cov8" title="1">{
+                h.capacity = hashTableJSON.Capacity
+        }</span> else<span class="cov0" title="0"> {
+                h.capacity = 10 // значение по умолчанию
+        }</span>
+
+        <span class="cov8" title="1">h.buckets = make([]*HashNode, h.capacity)
+        h.size = 0
+
+        // Добавляем все записи
+        for _, entry := range hashTableJSON.Entries </span><span class="cov8" title="1">{
+                h.Put(entry.Key, entry.Value)
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// ToJSON сериализует хеш-таблицу в JSON строку
+func (h *ChainingHash) ToJSON() (string, error) <span class="cov8" title="1">{
+        bytes, err := json.Marshal(h)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">return string(bytes), nil</span>
+}
+
+// FromJSON десериализует JSON строку в хеш-таблицу
+func (h *ChainingHash) FromJSON(jsonStr string) error <span class="cov8" title="1">{
+        return json.Unmarshal([]byte(jsonStr), h)
+}</span>
+
+// SaveToJSON сохраняет хеш-таблицу в JSON файл
+func (h *ChainingHash) SaveToJSON(filename string) error <span class="cov8" title="1">{
+        file, err := os.Create(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">defer file.Close()
+
+        encoder := json.NewEncoder(file)
+        encoder.SetIndent("", "    ")
+        return encoder.Encode(h)</span>
+}
+
+// LoadFromJSON загружает хеш-таблицу из JSON файла
+func (h *ChainingHash) LoadFromJSON(filename string) error <span class="cov8" title="1">{
+        file, err := os.Open(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">defer file.Close()
+
+        decoder := json.NewDecoder(file)
+        return decoder.Decode(h)</span>
+}
+
+// ToBinary сериализует хеш-таблицу в бинарный формат
+func (h *ChainingHash) ToBinary() ([]byte, error) <span class="cov8" title="1">{
+        var buf bytes.Buffer
+
+        // 1. Записываем capacity и size
+        if err := binary.Write(&amp;buf, binary.LittleEndian, int32(h.capacity)); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("ошибка записи capacity: %w", err)
+        }</span>
+        <span class="cov8" title="1">if err := binary.Write(&amp;buf, binary.LittleEndian, int32(h.size)); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("ошибка записи size: %w", err)
+        }</span>
+
+        // 2. Записываем все пары ключ-значение
+        <span class="cov8" title="1">for i := 0; i &lt; h.capacity; i++ </span><span class="cov8" title="1">{
+                curr := h.buckets[i]
+                for curr != nil </span><span class="cov8" title="1">{
+                        // Записываем ключ
+                        keyBytes := []byte(curr.key)
+                        keyLen := int32(len(keyBytes))
+                        if err := binary.Write(&amp;buf, binary.LittleEndian, keyLen); err != nil </span><span class="cov0" title="0">{
+                                return nil, fmt.Errorf("ошибка записи длины ключа: %w", err)
+                        }</span>
+                        <span class="cov8" title="1">if _, err := buf.Write(keyBytes); err != nil </span><span class="cov0" title="0">{
+                                return nil, fmt.Errorf("ошибка записи ключа: %w", err)
+                        }</span>
+
+                        // Записываем значение
+                        <span class="cov8" title="1">valueBytes := []byte(curr.value)
+                        valueLen := int32(len(valueBytes))
+                        if err := binary.Write(&amp;buf, binary.LittleEndian, valueLen); err != nil </span><span class="cov0" title="0">{
+                                return nil, fmt.Errorf("ошибка записи длины значения: %w", err)
+                        }</span>
+                        <span class="cov8" title="1">if _, err := buf.Write(valueBytes); err != nil </span><span class="cov0" title="0">{
+                                return nil, fmt.Errorf("ошибка записи значения: %w", err)
+                        }</span>
+
+                        <span class="cov8" title="1">curr = curr.next</span>
+                }
+        }
+
+        <span class="cov8" title="1">return buf.Bytes(), nil</span>
+}
+
+// FromBinary десериализует хеш-таблицу из бинарного формата
+func (h *ChainingHash) FromBinary(data []byte) error <span class="cov8" title="1">{
+        buf := bytes.NewReader(data)
+
+        // 1. Читаем capacity и size
+        var capacity, size int32
+        if err := binary.Read(buf, binary.LittleEndian, &amp;capacity); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("ошибка чтения capacity: %w", err)
+        }</span>
+        <span class="cov8" title="1">if err := binary.Read(buf, binary.LittleEndian, &amp;size); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("ошибка чтения size: %w", err)
+        }</span>
+
+        // 2. Инициализируем хеш-таблицу
+        <span class="cov8" title="1">if capacity &gt; 0 </span><span class="cov8" title="1">{
+                h.capacity = int(capacity)
+        }</span> else<span class="cov0" title="0"> {
+                h.capacity = 10
+        }</span>
+        <span class="cov8" title="1">h.buckets = make([]*HashNode, h.capacity)
+        h.size = 0
+
+        // 3. Читаем все пары ключ-значение
+        for i := 0; i &lt; int(size); i++ </span><span class="cov8" title="1">{
+                // Читаем ключ
+                var keyLen int32
+                if err := binary.Read(buf, binary.LittleEndian, &amp;keyLen); err != nil </span><span class="cov0" title="0">{
+
+                        return fmt.Errorf("ошибка чтения длины ключа %d: %w", i, err)
+                }</span>
+
+                <span class="cov8" title="1">keyBytes := make([]byte, keyLen)
+                if _, err := io.ReadFull(buf, keyBytes); err != nil </span><span class="cov0" title="0">{
+
+                        return fmt.Errorf("ошибка чтения ключа %d: %w", i, err)
+                }</span>
+                <span class="cov8" title="1">key := string(keyBytes)
+
+                // Читаем значение
+                var valueLen int32
+                if err := binary.Read(buf, binary.LittleEndian, &amp;valueLen); err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("ошибка чтения длины значения %d: %w", i, err)
+                }</span>
+
+                <span class="cov8" title="1">valueBytes := make([]byte, valueLen)
+                if _, err := io.ReadFull(buf, valueBytes); err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("ошибка чтения значения %d: %w", i, err)
+                }</span>
+                <span class="cov8" title="1">value := string(valueBytes)
+
+                h.Put(key, value)</span>
+        }
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// SaveToBinary сохраняет хеш-таблицу в бинарный файл
+func (h *ChainingHash) SaveToBinary(filename string) error <span class="cov8" title="1">{
+        data, err := h.ToBinary()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return os.WriteFile(filename, data, 0644)</span>
+}
+
+// LoadFromBinary загружает хеш-таблицу из бинарного файла
+func (h *ChainingHash) LoadFromBinary(filename string) error <span class="cov8" title="1">{
+        data, err := os.ReadFile(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return h.FromBinary(data)</span>
+}
+
+// ToBinaryWithBuckets сериализует хеш-таблицу с сохранением структуры бакетов (альтернативный вариант)
+func (h *ChainingHash) ToBinaryWithBuckets() ([]byte, error) <span class="cov8" title="1">{
+        var buf bytes.Buffer
+
+        // 1. Записываем capacity
+        if err := binary.Write(&amp;buf, binary.LittleEndian, int32(h.capacity)); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("ошибка записи capacity: %w", err)
+        }</span>
+
+        // 2. Для каждого бакета записываем его цепочку
+        <span class="cov8" title="1">for i := 0; i &lt; h.capacity; i++ </span><span class="cov8" title="1">{
+                // Считаем количество элементов в цепочке
+                chainLength := 0
+                curr := h.buckets[i]
+                for curr != nil </span><span class="cov8" title="1">{
+                        chainLength++
+                        curr = curr.next
+                }</span>
+
+                // Записываем длину цепочки
+                <span class="cov8" title="1">if err := binary.Write(&amp;buf, binary.LittleEndian, int32(chainLength)); err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("ошибка записи длины цепочки бакета %d: %w", i, err)
+                }</span>
+
+                // Записываем элементы цепочки
+                <span class="cov8" title="1">curr = h.buckets[i]
+                for curr != nil </span><span class="cov8" title="1">{
+                        // Записываем ключ
+                        keyBytes := []byte(curr.key)
+                        keyLen := int32(len(keyBytes))
+                        if err := binary.Write(&amp;buf, binary.LittleEndian, keyLen); err != nil </span><span class="cov0" title="0">{
+                                return nil, fmt.Errorf("ошибка записи длины ключа в бакете %d: %w", i, err)
+                        }</span>
+                        <span class="cov8" title="1">if _, err := buf.Write(keyBytes); err != nil </span><span class="cov0" title="0">{
+                                return nil, fmt.Errorf("ошибка записи ключа в бакете %d: %w", i, err)
+                        }</span>
+
+                        // Записываем значение
+                        <span class="cov8" title="1">valueBytes := []byte(curr.value)
+                        valueLen := int32(len(valueBytes))
+                        if err := binary.Write(&amp;buf, binary.LittleEndian, valueLen); err != nil </span><span class="cov0" title="0">{
+                                return nil, fmt.Errorf("ошибка записи длины значения в бакете %d: %w", i, err)
+                        }</span>
+                        <span class="cov8" title="1">if _, err := buf.Write(valueBytes); err != nil </span><span class="cov0" title="0">{
+                                return nil, fmt.Errorf("ошибка записи значения в бакете %d: %w", i, err)
+                        }</span>
+
+                        <span class="cov8" title="1">curr = curr.next</span>
+                }
+        }
+
+        <span class="cov8" title="1">return buf.Bytes(), nil</span>
+}
+
+// FromBinaryWithBuckets десериализует хеш-таблицу из формата с сохранением структуры бакетов
+func (h *ChainingHash) FromBinaryWithBuckets(data []byte) error <span class="cov8" title="1">{
+        buf := bytes.NewReader(data)
+
+        // 1. Читаем capacity
+        var capacity int32
+        if err := binary.Read(buf, binary.LittleEndian, &amp;capacity); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("ошибка чтения capacity: %w", err)
+        }</span>
+
+        // 2. Инициализируем хеш-таблицу
+        <span class="cov8" title="1">if capacity &gt; 0 </span><span class="cov8" title="1">{
+                h.capacity = int(capacity)
+        }</span> else<span class="cov0" title="0"> {
+                h.capacity = 10
+        }</span>
+        <span class="cov8" title="1">h.buckets = make([]*HashNode, h.capacity)
+        h.size = 0
+
+        // 3. Читаем каждый бакет
+        for i := 0; i &lt; h.capacity; i++ </span><span class="cov8" title="1">{
+                var chainLength int32
+                if err := binary.Read(buf, binary.LittleEndian, &amp;chainLength); err != nil </span><span class="cov0" title="0">{
+
+                        return fmt.Errorf("ошибка чтения длины цепочки бакета %d: %w", i, err)
+                }</span>
+
+                // Восстанавливаем цепочку в обратном порядке
+                <span class="cov8" title="1">var head *HashNode
+                for j := 0; j &lt; int(chainLength); j++ </span><span class="cov8" title="1">{
+                        var keyLen int32
+                        if err := binary.Read(buf, binary.LittleEndian, &amp;keyLen); err != nil </span><span class="cov0" title="0">{
+                                return fmt.Errorf("ошибка чтения длины ключа в бакете %d, элемент %d: %w", i, j, err)
+                        }</span>
+
+                        <span class="cov8" title="1">keyBytes := make([]byte, keyLen)
+                        if _, err := io.ReadFull(buf, keyBytes); err != nil </span><span class="cov0" title="0">{
+                                return fmt.Errorf("ошибка чтения ключа в бакете %d, элемент %d: %w", i, j, err)
+                        }</span>
+                        <span class="cov8" title="1">key := string(keyBytes)
+
+                        // Читаем значение
+                        var valueLen int32
+                        if err := binary.Read(buf, binary.LittleEndian, &amp;valueLen); err != nil </span><span class="cov0" title="0">{
+                                return fmt.Errorf("ошибка чтения длины значения в бакете %d, элемент %d: %w", i, j, err)
+                        }</span>
+
+                        <span class="cov8" title="1">valueBytes := make([]byte, valueLen)
+                        if _, err := io.ReadFull(buf, valueBytes); err != nil </span><span class="cov0" title="0">{
+                                return fmt.Errorf("ошибка чтения значения в бакете %d, элемент %d: %w", i, j, err)
+                        }</span>
+                        <span class="cov8" title="1">value := string(valueBytes)
+
+                        // Создаем узел и добавляем в начало цепочки
+                        node := NewHashNode(key, value)
+                        node.next = head
+                        head = node
+                        h.size++</span>
+                }
+
+                // Сохраняем цепочку в бакет
+                <span class="cov8" title="1">h.buckets[i] = head</span>
+        }
+
+        <span class="cov8" title="1">return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package structs
+
+import (
+        "bytes"
+        "encoding/binary"
+        "encoding/json"
+        "fmt"
+        "io"
+        "os"
+        "strings"
+)
+
+type LNode struct {
+        val  string
+        prev *LNode
+        next *LNode
+}
+
+func NewLNode(value string) *LNode <span class="cov8" title="1">{
+        return &amp;LNode{
+                val:  value,
+                prev: nil,
+                next: nil,
+        }
+}</span>
+
+type DoublyLinkedList struct {
+        head *LNode
+        tail *LNode
+}
+
+func NewDoublyLinkedList() *DoublyLinkedList <span class="cov8" title="1">{
+        return &amp;DoublyLinkedList{
+                head: nil,
+                tail: nil,
+        }
+}</span>
+
+func (d *DoublyLinkedList) searchNode(val string) *LNode <span class="cov8" title="1">{
+        if d.head == nil </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">tmp := d.head
+        for tmp != nil </span><span class="cov8" title="1">{
+                if tmp.val == val </span><span class="cov8" title="1">{
+                        return tmp
+                }</span>
+                <span class="cov8" title="1">tmp = tmp.next</span>
+        }
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (d *DoublyLinkedList) InsertAtHead(val string) <span class="cov8" title="1">{
+        newNode := NewLNode(val)
+
+        if d.head == nil </span><span class="cov8" title="1">{
+                d.head = newNode
+                d.tail = newNode
+                return
+        }</span>
+
+        <span class="cov8" title="1">newNode.next = d.head
+        d.head.prev = newNode
+        d.head = newNode</span>
+}
+
+func (d *DoublyLinkedList) InsertAtTail(val string) <span class="cov8" title="1">{
+        newNode := NewLNode(val)
+
+        if d.head == nil </span><span class="cov8" title="1">{
+                d.head = newNode
+                d.tail = newNode
+                return
+        }</span>
+
+        <span class="cov8" title="1">d.tail.next = newNode
+        newNode.prev = d.tail
+        d.tail = newNode</span>
+}
+
+func (d *DoublyLinkedList) InsertBefore(target string, val string) error <span class="cov8" title="1">{
+        targetNode := d.searchNode(target)
+        if targetNode == nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("заданное значение '%s' отсутствует в списке", target)
+        }</span>
+
+        <span class="cov8" title="1">if targetNode == d.head </span><span class="cov8" title="1">{
+                d.InsertAtHead(val)
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">newNode := NewLNode(val)
+        newNode.prev = targetNode.prev
+        newNode.next = targetNode
+        targetNode.prev.next = newNode
+        targetNode.prev = newNode
+
+        return nil</span>
+}
+
+func (d *DoublyLinkedList) InsertAfter(target string, val string) error <span class="cov8" title="1">{
+        targetNode := d.searchNode(target)
+        if targetNode == nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("заданное значение '%s' отсутствует в списке", target)
+        }</span>
+
+        <span class="cov8" title="1">newNode := NewLNode(val)
+        newNode.prev = targetNode
+        newNode.next = targetNode.next
+
+        if targetNode.next != nil </span><span class="cov8" title="1">{
+                targetNode.next.prev = newNode
+        }</span> else<span class="cov8" title="1"> {
+                d.tail = newNode
+        }</span>
+        <span class="cov8" title="1">targetNode.next = newNode
+
+        return nil</span>
+}
+
+func (d *DoublyLinkedList) DeleteHead() error <span class="cov8" title="1">{
+        if d.head == nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("список пуст")
+        }</span>
+
+        <span class="cov8" title="1">d.head = d.head.next
+
+        if d.head != nil </span><span class="cov8" title="1">{
+                d.head.prev = nil
+        }</span> else<span class="cov8" title="1"> {
+                d.tail = nil
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (d *DoublyLinkedList) DeleteTail() error <span class="cov8" title="1">{
+        if d.head == nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("список пуст")
+        }</span>
+
+        <span class="cov8" title="1">if d.head == d.tail </span><span class="cov8" title="1">{
+                d.head = nil
+                d.tail = nil
+        }</span> else<span class="cov8" title="1"> {
+                d.tail = d.tail.prev
+                d.tail.next = nil
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (d *DoublyLinkedList) DeleteBefore(target string) error <span class="cov8" title="1">{
+        targetNode := d.searchNode(target)
+        if targetNode == nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("заданное значение '%s' отсутствует в списке", target)
+        }</span>
+        <span class="cov8" title="1">if targetNode.prev == nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("перед заданным значением '%s' отсутствуют узлы. Удаление невозможно", target)
+        }</span>
+
+        <span class="cov8" title="1">deleteNode := targetNode.prev
+        if deleteNode == d.head </span><span class="cov0" title="0">{
+                return d.DeleteHead()
+        }</span>
+
+        <span class="cov8" title="1">targetNode.prev = deleteNode.prev
+        deleteNode.prev.next = targetNode
+
+        return nil</span>
+}
+
+func (d *DoublyLinkedList) DeleteAfter(target string) error <span class="cov8" title="1">{
+        targetNode := d.searchNode(target)
+        if targetNode == nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("заданное значение '%s' отсутствует в списке", target)
+        }</span>
+        <span class="cov8" title="1">if targetNode.next == nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("после заданного значения '%s' отсутствуют узлы. Удаление невозможно", target)
+        }</span>
+
+        <span class="cov8" title="1">deleteNode := targetNode.next
+        if deleteNode == d.tail </span><span class="cov8" title="1">{
+                return d.DeleteTail()
+        }</span>
+
+        <span class="cov8" title="1">targetNode.next = deleteNode.next
+        deleteNode.next.prev = targetNode
+
+        return nil</span>
+}
+
+func (d *DoublyLinkedList) DeleteByValue(target string) error <span class="cov8" title="1">{
+        if d.head == nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("список пустой, удалять нечего")
+        }</span>
+
+        <span class="cov8" title="1">targetNode := d.searchNode(target)
+        if targetNode == nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("заданное значение '%s' отсутствует в списке", target)
+        }</span>
+
+        <span class="cov8" title="1">if targetNode == d.head </span><span class="cov8" title="1">{
+                return d.DeleteHead()
+        }</span>
+        <span class="cov8" title="1">if targetNode == d.tail </span><span class="cov0" title="0">{
+                return d.DeleteTail()
+        }</span>
+
+        <span class="cov8" title="1">targetNode.prev.next = targetNode.next
+        targetNode.next.prev = targetNode.prev
+
+        return nil</span>
+}
+
+func (d *DoublyLinkedList) SearchByValue(target string) int <span class="cov8" title="1">{
+        curr := d.head
+        searchIndex := 0
+
+        for curr != nil </span><span class="cov8" title="1">{
+                if curr.val == target </span><span class="cov8" title="1">{
+                        return searchIndex
+                }</span>
+                <span class="cov8" title="1">curr = curr.next
+                searchIndex++</span>
+        }
+
+        <span class="cov8" title="1">return -1</span>
+}
+
+func (d *DoublyLinkedList) Length() int <span class="cov8" title="1">{
+        count := 0
+        curr := d.head
+
+        for curr != nil </span><span class="cov8" title="1">{
+                count++
+                curr = curr.next
+        }</span>
+        <span class="cov8" title="1">return count</span>
+}
+
+func (d *DoublyLinkedList) IsEmpty() bool <span class="cov8" title="1">{
+        return d.head == nil
+}</span>
+
+func (d *DoublyLinkedList) GetHead() string <span class="cov8" title="1">{
+        if d.head == nil </span><span class="cov8" title="1">{
+                return ""
+        }</span>
+        <span class="cov8" title="1">return d.head.val</span>
+}
+
+func (d *DoublyLinkedList) GetTail() string <span class="cov8" title="1">{
+        if d.tail == nil </span><span class="cov8" title="1">{
+                return ""
+        }</span>
+        <span class="cov8" title="1">return d.tail.val</span>
+}
+
+func (d *DoublyLinkedList) Print() <span class="cov8" title="1">{
+        if d.head == nil </span><span class="cov0" title="0">{
+                fmt.Println("Список пуст")
+                return
+        }</span>
+
+        <span class="cov8" title="1">var elements []string
+        curr := d.head
+
+        for curr != nil </span><span class="cov8" title="1">{
+                elements = append(elements, curr.val)
+                curr = curr.next
+        }</span>
+
+        <span class="cov8" title="1">fmt.Println(strings.Join(elements, " "))</span>
+}
+
+func (d *DoublyLinkedList) PrintReverse() <span class="cov8" title="1">{
+        if d.head == nil </span><span class="cov8" title="1">{
+                fmt.Println("Список пуст")
+                return
+        }</span>
+
+        <span class="cov8" title="1">var elements []string
+        curr := d.tail
+
+        for curr != nil </span><span class="cov8" title="1">{
+                elements = append(elements, curr.val)
+                curr = curr.prev
+        }</span>
+
+        <span class="cov8" title="1">fmt.Println(strings.Join(elements, " "))</span>
+}
+
+func (d *DoublyLinkedList) String() string <span class="cov8" title="1">{
+        if d.head == nil </span><span class="cov8" title="1">{
+                return "Список пуст"
+        }</span>
+
+        <span class="cov8" title="1">var elements []string
+        curr := d.head
+
+        for curr != nil </span><span class="cov8" title="1">{
+                elements = append(elements, curr.val)
+                curr = curr.next
+        }</span>
+
+        <span class="cov8" title="1">return "head -&gt; " + strings.Join(elements, " &lt;-&gt; ") + " -&gt; tail"</span>
+}
+
+func (d *DoublyLinkedList) StringReverse() string <span class="cov8" title="1">{
+        if d.head == nil </span><span class="cov8" title="1">{
+                return "Список пуст"
+        }</span>
+
+        <span class="cov8" title="1">var elements []string
+        curr := d.tail
+
+        for curr != nil </span><span class="cov8" title="1">{
+                elements = append(elements, curr.val)
+                curr = curr.prev
+        }</span>
+
+        <span class="cov8" title="1">return "tail -&gt; " + strings.Join(elements, " &lt;-&gt; ") + " -&gt; head"</span>
+}
+
+func (d *DoublyLinkedList) ToSlice() []string <span class="cov8" title="1">{
+        var result []string
+        curr := d.head
+
+        for curr != nil </span><span class="cov8" title="1">{
+                result = append(result, curr.val)
+                curr = curr.next
+        }</span>
+
+        <span class="cov8" title="1">return result</span>
+}
+
+func (d *DoublyLinkedList) ToSliceReverse() []string <span class="cov8" title="1">{
+        var result []string
+        curr := d.tail
+
+        for curr != nil </span><span class="cov8" title="1">{
+                result = append(result, curr.val)
+                curr = curr.prev
+        }</span>
+
+        <span class="cov8" title="1">return result</span>
+}
+
+func (d *DoublyLinkedList) Clear() <span class="cov8" title="1">{
+        d.head = nil
+        d.tail = nil
+}</span>
+
+// MarshalJSON реализует интерфейс json.Marshaler
+func (d *DoublyLinkedList) MarshalJSON() ([]byte, error) <span class="cov8" title="1">{
+        type LinkedListJSON struct {
+                Elements []string `json:"elements"`
+                Size     int      `json:"size"`
+                Head     string   `json:"head,omitempty"`
+                Tail     string   `json:"tail,omitempty"`
+        }
+
+        elements := d.ToSlice()
+        linkedListJSON := LinkedListJSON{
+                Elements: elements,
+                Size:     d.Length(),
+        }
+
+        if d.head != nil </span><span class="cov8" title="1">{
+                linkedListJSON.Head = d.head.val
+        }</span>
+        <span class="cov8" title="1">if d.tail != nil </span><span class="cov8" title="1">{
+                linkedListJSON.Tail = d.tail.val
+        }</span>
+
+        <span class="cov8" title="1">return json.Marshal(linkedListJSON)</span>
+}
+
+// UnmarshalJSON реализует интерфейс json.Unmarshaler
+func (d *DoublyLinkedList) UnmarshalJSON(data []byte) error <span class="cov8" title="1">{
+        type LinkedListJSON struct {
+                Elements []string `json:"elements"`
+                Size     int      `json:"size"`
+                Head     string   `json:"head,omitempty"`
+                Tail     string   `json:"tail,omitempty"`
+        }
+
+        var linkedListJSON LinkedListJSON
+        if err := json.Unmarshal(data, &amp;linkedListJSON); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">d.Clear()
+        for _, elem := range linkedListJSON.Elements </span><span class="cov8" title="1">{
+                d.InsertAtTail(elem)
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// ToJSON сериализует список в JSON строку
+func (d *DoublyLinkedList) ToJSON() (string, error) <span class="cov8" title="1">{
+        bytes, err := json.Marshal(d)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">return string(bytes), nil</span>
+}
+
+// FromJSON десериализует JSON строку в список
+func (d *DoublyLinkedList) FromJSON(jsonStr string) error <span class="cov8" title="1">{
+        return json.Unmarshal([]byte(jsonStr), d)
+}</span>
+
+// SaveToJSON сохраняет список в JSON файл
+func (d *DoublyLinkedList) SaveToJSON(filename string) error <span class="cov8" title="1">{
+        file, err := os.Create(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">defer file.Close()
+
+        encoder := json.NewEncoder(file)
+        encoder.SetIndent("", "    ")
+        return encoder.Encode(d)</span>
+}
+
+// LoadFromJSON загружает список из JSON файла
+func (d *DoublyLinkedList) LoadFromJSON(filename string) error <span class="cov8" title="1">{
+        file, err := os.Open(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">defer file.Close()
+
+        decoder := json.NewDecoder(file)
+        return decoder.Decode(d)</span>
+}
+
+// ToBinary сериализует список в бинарный формат
+func (d *DoublyLinkedList) ToBinary() ([]byte, error) <span class="cov8" title="1">{
+        var buf bytes.Buffer
+
+        // 1. Записываем размер списка
+        size := int32(d.Length())
+        if err := binary.Write(&amp;buf, binary.LittleEndian, size); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("ошибка записи размера списка: %w", err)
+        }</span>
+
+        // 2. Записываем каждый элемент (в порядке от head к tail)
+        <span class="cov8" title="1">current := d.head
+        for current != nil </span><span class="cov8" title="1">{
+                strBytes := []byte(current.val)
+                strLen := int32(len(strBytes))
+
+                // Записываем длину строки
+                if err := binary.Write(&amp;buf, binary.LittleEndian, strLen); err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("ошибка записи длины строки: %w", err)
+                }</span>
+
+                // Записываем байты строки
+                <span class="cov8" title="1">if _, err := buf.Write(strBytes); err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("ошибка записи данных строки: %w", err)
+                }</span>
+
+                <span class="cov8" title="1">current = current.next</span>
+        }
+
+        <span class="cov8" title="1">return buf.Bytes(), nil</span>
+}
+
+// FromBinary десериализует список из бинарного формата
+func (d *DoublyLinkedList) FromBinary(data []byte) error <span class="cov8" title="1">{
+        buf := bytes.NewReader(data)
+
+        // 1. Считываем размер списка
+        var size int32
+        if err := binary.Read(buf, binary.LittleEndian, &amp;size); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("ошибка чтения размера списка: %w", err)
+        }</span>
+
+        // 2. Очищаем текущий список
+        <span class="cov8" title="1">d.Clear()
+
+        // 3. Считываем каждый элемент
+        for i := 0; i &lt; int(size); i++ </span><span class="cov8" title="1">{
+                // Считываем длину строки
+                var strLen int32
+                if err := binary.Read(buf, binary.LittleEndian, &amp;strLen); err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("ошибка чтения длины строки %d: %w", i, err)
+                }</span>
+
+                // Считываем байты строки
+                <span class="cov8" title="1">strBytes := make([]byte, strLen)
+                if _, err := io.ReadFull(buf, strBytes); err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("ошибка чтения данных строки %d: %w", i, err)
+                }</span>
+
+                // Добавляем элемент в конец списка
+                <span class="cov8" title="1">d.InsertAtTail(string(strBytes))</span>
+        }
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// SaveToBinary сохраняет список в бинарный файл
+func (d *DoublyLinkedList) SaveToBinary(filename string) error <span class="cov8" title="1">{
+        data, err := d.ToBinary()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return os.WriteFile(filename, data, 0644)</span>
+}
+
+// LoadFromBinary загружает список из бинарного файла
+func (d *DoublyLinkedList) LoadFromBinary(filename string) error <span class="cov8" title="1">{
+        data, err := os.ReadFile(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return d.FromBinary(data)</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package structs
+
+import (
+        "bytes"
+        "encoding/binary"
+        "encoding/json"
+        "fmt"
+        "os"
+        "strings"
+)
+
+type TNode struct {
+        val   int
+        left  *TNode
+        right *TNode
+}
+
+func NewTNode(value int) *TNode <span class="cov8" title="1">{
+        return &amp;TNode{
+                val:   value,
+                left:  nil,
+                right: nil,
+        }
+}</span>
+
+func NewTNodeWithChildren(value int, leftPtr *TNode, rightPtr *TNode) *TNode <span class="cov8" title="1">{
+        return &amp;TNode{
+                val:   value,
+                left:  leftPtr,
+                right: rightPtr,
+        }
+}</span>
+
+type Tree struct {
+        root *TNode
+}
+
+func NewTree() *Tree <span class="cov8" title="1">{
+        return &amp;Tree{
+                root: nil,
+        }
+}</span>
+
+func (t *Tree) searchElement(node *TNode, val int) *TNode <span class="cov8" title="1">{
+        if node == nil </span><span class="cov8" title="1">{
+                return nil
+        }</span>
+        <span class="cov8" title="1">if node.val == val </span><span class="cov8" title="1">{
+                return node
+        }</span>
+
+        <span class="cov8" title="1">leftSearch := t.searchElement(node.left, val)
+        if leftSearch != nil </span><span class="cov8" title="1">{
+                return leftSearch
+        }</span>
+
+        <span class="cov8" title="1">return t.searchElement(node.right, val)</span>
+}
+
+func (t *Tree) fullBinaryCheck(node *TNode) bool <span class="cov8" title="1">{
+        if node == nil </span><span class="cov8" title="1">{
+                return true
+        }</span>
+        <span class="cov8" title="1">if node.left == nil &amp;&amp; node.right == nil </span><span class="cov8" title="1">{
+                return true
+        }</span>
+
+        <span class="cov8" title="1">if node.left != nil &amp;&amp; node.right != nil </span><span class="cov8" title="1">{
+                return t.fullBinaryCheck(node.left) &amp;&amp; t.fullBinaryCheck(node.right)
+        }</span>
+        <span class="cov8" title="1">return false</span>
+}
+
+func (t *Tree) InsertNode(val int) bool <span class="cov8" title="1">{
+        newNode := NewTNode(val)
+
+        if t.root == nil </span><span class="cov8" title="1">{
+                t.root = newNode
+                return true
+        }</span>
+
+        <span class="cov8" title="1">curr := t.root
+        for curr != nil </span><span class="cov8" title="1">{
+                if val &gt; curr.val </span><span class="cov8" title="1">{
+                        if curr.right != nil </span><span class="cov0" title="0">{
+                                curr = curr.right
+                        }</span> else<span class="cov8" title="1"> {
+                                curr.right = newNode
+                                return true
+                        }</span>
+                } else<span class="cov8" title="1"> if val &lt; curr.val </span><span class="cov8" title="1">{
+                        if curr.left != nil </span><span class="cov8" title="1">{
+                                curr = curr.left
+                        }</span> else<span class="cov8" title="1"> {
+                                curr.left = newNode
+                                return true
+                        }</span>
+                } else<span class="cov8" title="1"> {
+                        return false
+                }</span>
+        }
+        <span class="cov0" title="0">return false</span>
+}
+
+func (t *Tree) SearchNode(val int) bool <span class="cov8" title="1">{
+        foundNode := t.searchElement(t.root, val)
+        return foundNode != nil
+}</span>
+
+func (t *Tree) IsFullBinary() bool <span class="cov8" title="1">{
+        return t.fullBinaryCheck(t.root)
+}</span>
+
+func (t *Tree) PreOrder() []int <span class="cov8" title="1">{
+        result := make([]int, 0)
+        t.preorderTraverse(t.root, &amp;result)
+        return result
+}</span>
+
+func (t *Tree) preorderTraverse(node *TNode, result *[]int) <span class="cov8" title="1">{
+        if node == nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+        <span class="cov8" title="1">*result = append(*result, node.val)
+        t.preorderTraverse(node.left, result)
+        t.preorderTraverse(node.right, result)</span>
+}
+
+func (t *Tree) InOrder() []int <span class="cov8" title="1">{
+        result := make([]int, 0)
+        t.inorderTraverse(t.root, &amp;result)
+        return result
+}</span>
+
+func (t *Tree) inorderTraverse(node *TNode, result *[]int) <span class="cov8" title="1">{
+        if node == nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+        <span class="cov8" title="1">t.inorderTraverse(node.left, result)
+        *result = append(*result, node.val)
+        t.inorderTraverse(node.right, result)</span>
+}
+
+func (t *Tree) PostOrder() []int <span class="cov8" title="1">{
+        result := make([]int, 0)
+        t.postorderTraverse(t.root, &amp;result)
+        return result
+}</span>
+
+func (t *Tree) postorderTraverse(node *TNode, result *[]int) <span class="cov8" title="1">{
+        if node == nil </span><span class="cov8" title="1">{
+                return
+        }</span>
+        <span class="cov8" title="1">t.postorderTraverse(node.left, result)
+        t.postorderTraverse(node.right, result)
+        *result = append(*result, node.val)</span>
+}
+
+func (t *Tree) LevelOrder() []int <span class="cov8" title="1">{
+        if t.root == nil </span><span class="cov8" title="1">{
+                return []int{}
+        }</span>
+
+        <span class="cov8" title="1">result := make([]int, 0)
+        queue := []*TNode{t.root}
+
+        for len(queue) &gt; 0 </span><span class="cov8" title="1">{
+                node := queue[0]
+                queue = queue[1:]
+
+                result = append(result, node.val)
+
+                if node.left != nil </span><span class="cov8" title="1">{
+                        queue = append(queue, node.left)
+                }</span>
+                <span class="cov8" title="1">if node.right != nil </span><span class="cov8" title="1">{
+                        queue = append(queue, node.right)
+                }</span>
+        }
+
+        <span class="cov8" title="1">return result</span>
+}
+
+func (t *Tree) Height() int <span class="cov8" title="1">{
+        return t.calculateHeight(t.root)
+}</span>
+
+func (t *Tree) calculateHeight(node *TNode) int <span class="cov8" title="1">{
+        if node == nil </span><span class="cov8" title="1">{
+                return 0
+        }</span>
+
+        <span class="cov8" title="1">leftHeight := t.calculateHeight(node.left)
+        rightHeight := t.calculateHeight(node.right)
+
+        if leftHeight &gt; rightHeight </span><span class="cov8" title="1">{
+                return leftHeight + 1
+        }</span>
+        <span class="cov8" title="1">return rightHeight + 1</span>
+}
+
+func (t *Tree) Size() int <span class="cov8" title="1">{
+        return t.countNodes(t.root)
+}</span>
+
+func (t *Tree) countNodes(node *TNode) int <span class="cov8" title="1">{
+        if node == nil </span><span class="cov8" title="1">{
+                return 0
+        }</span>
+        <span class="cov8" title="1">return 1 + t.countNodes(node.left) + t.countNodes(node.right)</span>
+}
+
+func (t *Tree) IsEmpty() bool <span class="cov8" title="1">{
+        return t.root == nil
+}</span>
+
+func (t *Tree) GetRootValue() (int, bool) <span class="cov8" title="1">{
+        if t.root == nil </span><span class="cov8" title="1">{
+                return 0, false
+        }</span>
+        <span class="cov8" title="1">return t.root.val, true</span>
+}
+
+func (t *Tree) PrintPreOrder() <span class="cov8" title="1">{
+        elements := t.PreOrder()
+        fmt.Println("PreOrder:", strings.Trim(fmt.Sprint(elements), "[]"))
+}</span>
+
+func (t *Tree) PrintInOrder() <span class="cov8" title="1">{
+        elements := t.InOrder()
+        fmt.Println("InOrder:", strings.Trim(fmt.Sprint(elements), "[]"))
+}</span>
+
+func (t *Tree) PrintPostOrder() <span class="cov8" title="1">{
+        elements := t.PostOrder()
+        fmt.Println("PostOrder:", strings.Trim(fmt.Sprint(elements), "[]"))
+}</span>
+
+func (t *Tree) PrintLevelOrder() <span class="cov8" title="1">{
+        elements := t.LevelOrder()
+        fmt.Println("LevelOrder:", strings.Trim(fmt.Sprint(elements), "[]"))
+}</span>
+
+func (t *Tree) String() string <span class="cov8" title="1">{
+        if t.root == nil </span><span class="cov8" title="1">{
+                return "Дерево пустое"
+        }</span>
+
+        <span class="cov8" title="1">elements := t.LevelOrder()
+        return fmt.Sprintf("Дерево (обход по уровням): %v", elements)</span>
+}
+
+// СЕРИАЛИЗАЦИЯ / ДЕСЕРИАЛИЗАЦИЯ
+
+// TreeNodeJSON вспомогательная структура для JSON сериализации
+type TreeNodeJSON struct {
+        Value int           `json:"value"`
+        Left  *TreeNodeJSON `json:"left,omitempty"`
+        Right *TreeNodeJSON `json:"right,omitempty"`
+}
+
+// MarshalJSON реализует интерфейс json.Marshaler
+func (t *Tree) MarshalJSON() ([]byte, error) <span class="cov8" title="1">{
+        if t.root == nil </span><span class="cov0" title="0">{
+                return json.Marshal(nil)
+        }</span>
+
+        <span class="cov8" title="1">rootJSON := t.serializeNodeToJSON(t.root)
+        return json.Marshal(rootJSON)</span>
+}
+
+// serializeNodeToJSON рекурсивно преобразует узел в JSON структуру
+func (t *Tree) serializeNodeToJSON(node *TNode) *TreeNodeJSON <span class="cov8" title="1">{
+        if node == nil </span><span class="cov8" title="1">{
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">return &amp;TreeNodeJSON{
+                Value: node.val,
+                Left:  t.serializeNodeToJSON(node.left),
+                Right: t.serializeNodeToJSON(node.right),
+        }</span>
+}
+
+// UnmarshalJSON реализует интерфейс json.Unmarshaler
+func (t *Tree) UnmarshalJSON(data []byte) error <span class="cov8" title="1">{
+        // Проверяем, не пустое ли дерево
+        if string(data) == "null" </span><span class="cov0" title="0">{
+                t.root = nil
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">var rootJSON TreeNodeJSON
+        if err := json.Unmarshal(data, &amp;rootJSON); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">t.root = t.deserializeNodeFromJSON(&amp;rootJSON)
+        return nil</span>
+}
+
+// deserializeNodeFromJSON рекурсивно восстанавливает дерево из JSON
+func (t *Tree) deserializeNodeFromJSON(nodeJSON *TreeNodeJSON) *TNode <span class="cov8" title="1">{
+        if nodeJSON == nil </span><span class="cov8" title="1">{
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">node := NewTNode(nodeJSON.Value)
+        node.left = t.deserializeNodeFromJSON(nodeJSON.Left)
+        node.right = t.deserializeNodeFromJSON(nodeJSON.Right)
+
+        return node</span>
+}
+
+// ToJSON сериализует дерево в JSON строку
+func (t *Tree) ToJSON() (string, error) <span class="cov8" title="1">{
+        bytes, err := json.Marshal(t)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">return string(bytes), nil</span>
+}
+
+// FromJSON десериализует JSON строку в дерево
+func (t *Tree) FromJSON(jsonStr string) error <span class="cov8" title="1">{
+        return json.Unmarshal([]byte(jsonStr), t)
+}</span>
+
+// SaveToJSON сохраняет дерево в JSON файл
+func (t *Tree) SaveToJSON(filename string) error <span class="cov8" title="1">{
+        file, err := os.Create(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">defer file.Close()
+
+        encoder := json.NewEncoder(file)
+        encoder.SetIndent("", "    ")
+        return encoder.Encode(t)</span>
+}
+
+// LoadFromJSON загружает дерево из JSON файла
+func (t *Tree) LoadFromJSON(filename string) error <span class="cov8" title="1">{
+        file, err := os.Open(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">defer file.Close()
+
+        decoder := json.NewDecoder(file)
+        return decoder.Decode(t)</span>
+}
+
+// ToBinary сериализует дерево в бинарный формат
+func (t *Tree) ToBinary() ([]byte, error) <span class="cov8" title="1">{
+        var buf bytes.Buffer
+
+        // Используем обход в ширину для сериализации
+        if t.root == nil </span><span class="cov8" title="1">{
+                if err := binary.Write(&amp;buf, binary.LittleEndian, int32(0)); err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("ошибка записи маркера пустого дерева: %w", err)
+                }</span>
+                <span class="cov8" title="1">return buf.Bytes(), nil</span>
+        }
+
+        // Записываем 1 как признак непустого дерева
+        <span class="cov8" title="1">if err := binary.Write(&amp;buf, binary.LittleEndian, int32(1)); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("ошибка записи маркера непустого дерева: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">queue := []*TNode{t.root}
+
+        for len(queue) &gt; 0 </span><span class="cov8" title="1">{
+                node := queue[0]
+                queue = queue[1:]
+
+                // Записываем значение узла
+                if err := binary.Write(&amp;buf, binary.LittleEndian, int32(node.val)); err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("ошибка записи значения узла: %w", err)
+                }</span>
+
+                <span class="cov8" title="1">hasLeft := int32(0)
+                if node.left != nil </span><span class="cov8" title="1">{
+                        hasLeft = 1
+                }</span>
+                <span class="cov8" title="1">hasRight := int32(0)
+                if node.right != nil </span><span class="cov8" title="1">{
+                        hasRight = 1
+                }</span>
+
+                <span class="cov8" title="1">if err := binary.Write(&amp;buf, binary.LittleEndian, hasLeft); err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("ошибка записи маркера левого потомка: %w", err)
+                }</span>
+                <span class="cov8" title="1">if err := binary.Write(&amp;buf, binary.LittleEndian, hasRight); err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("ошибка записи маркера правого потомка: %w", err)
+                }</span>
+
+                // Добавляем потомков в очередь
+                <span class="cov8" title="1">if node.left != nil </span><span class="cov8" title="1">{
+                        queue = append(queue, node.left)
+                }</span>
+                <span class="cov8" title="1">if node.right != nil </span><span class="cov8" title="1">{
+                        queue = append(queue, node.right)
+                }</span>
+        }
+
+        <span class="cov8" title="1">return buf.Bytes(), nil</span>
+}
+
+// FromBinary десериализует дерево из бинарного формата
+func (t *Tree) FromBinary(data []byte) error <span class="cov8" title="1">{
+        buf := bytes.NewReader(data)
+
+        // Читаем маркер пустого/непустого дерева
+        var isEmpty int32
+        if err := binary.Read(buf, binary.LittleEndian, &amp;isEmpty); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("ошибка чтения маркера дерева: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">if isEmpty == 0 </span><span class="cov0" title="0">{
+                t.root = nil
+                return nil
+        }</span>
+
+        // Восстанавливаем дерево обходом в ширину
+        <span class="cov8" title="1">type NodeWithParent struct {
+                node   *TNode
+                parent *TNode
+                isLeft bool
+        }
+
+        // Читаем корень
+        var rootVal int32
+        if err := binary.Read(buf, binary.LittleEndian, &amp;rootVal); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("ошибка чтения значения корня: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">t.root = NewTNode(int(rootVal))
+
+        // Читаем маркеры потомков для корня
+        var rootHasLeft, rootHasRight int32
+        if err := binary.Read(buf, binary.LittleEndian, &amp;rootHasLeft); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("ошибка чтения маркера левого потомка корня: %w", err)
+        }</span>
+        <span class="cov8" title="1">if err := binary.Read(buf, binary.LittleEndian, &amp;rootHasRight); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("ошибка чтения маркера правого потомка корня: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">queue := []NodeWithParent{
+                {node: t.root, parent: nil, isLeft: false},
+        }
+
+        for len(queue) &gt; 0 </span><span class="cov8" title="1">{
+                current := queue[0]
+                queue = queue[1:]
+
+                // Если это не корень, читаем значение узла
+                if current.parent != nil </span><span class="cov8" title="1">{
+                        var nodeVal int32
+                        if err := binary.Read(buf, binary.LittleEndian, &amp;nodeVal); err != nil </span><span class="cov0" title="0">{
+                                return fmt.Errorf("ошибка чтения значения узла: %w", err)
+                        }</span>
+                        <span class="cov8" title="1">current.node.val = int(nodeVal)</span>
+                }
+
+                // Читаем маркеры потомков для текущего узла
+                <span class="cov8" title="1">var hasLeft, hasRight int32
+                if current.parent == nil </span><span class="cov8" title="1">{
+                        // Для корня маркеры уже прочитаны
+                        hasLeft = rootHasLeft
+                        hasRight = rootHasRight
+                }</span> else<span class="cov8" title="1"> {
+                        if err := binary.Read(buf, binary.LittleEndian, &amp;hasLeft); err != nil </span><span class="cov0" title="0">{
+                                return fmt.Errorf("ошибка чтения маркера левого потомка: %w", err)
+                        }</span>
+                        <span class="cov8" title="1">if err := binary.Read(buf, binary.LittleEndian, &amp;hasRight); err != nil </span><span class="cov0" title="0">{
+                                return fmt.Errorf("ошибка чтения маркера правого потомка: %w", err)
+                        }</span>
+                }
+
+                // Создаем левого потомка если нужно
+                <span class="cov8" title="1">if hasLeft == 1 </span><span class="cov8" title="1">{
+                        leftNode := NewTNode(0) // Значение будет прочитано позже
+                        current.node.left = leftNode
+                        queue = append(queue, NodeWithParent{
+                                node:   leftNode,
+                                parent: current.node,
+                                isLeft: true,
+                        })
+                }</span>
+
+                // Создаем правого потомка если нужно
+                <span class="cov8" title="1">if hasRight == 1 </span><span class="cov8" title="1">{
+                        rightNode := NewTNode(0) // Значение будет прочитано позже
+                        current.node.right = rightNode
+                        queue = append(queue, NodeWithParent{
+                                node:   rightNode,
+                                parent: current.node,
+                                isLeft: false,
+                        })
+                }</span>
+        }
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// SaveToBinary сохраняет дерево в бинарный файл
+func (t *Tree) SaveToBinary(filename string) error <span class="cov8" title="1">{
+        data, err := t.ToBinary()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return os.WriteFile(filename, data, 0644)</span>
+}
+
+// LoadFromBinary загружает дерево из бинарного файла
+func (t *Tree) LoadFromBinary(filename string) error <span class="cov8" title="1">{
+        data, err := os.ReadFile(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return t.FromBinary(data)</span>
+}
+
+// ToBinaryCompact сериализует дерево в компактный бинарный формат (альтернативный вариант)
+func (t *Tree) ToBinaryCompact() ([]byte, error) <span class="cov8" title="1">{
+        var buf bytes.Buffer
+
+        // Используем префиксный обход (pre-order) с маркерами null
+        if err := t.serializePreOrderCompact(t.root, &amp;buf); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return buf.Bytes(), nil</span>
+}
+
+func (t *Tree) serializePreOrderCompact(node *TNode, buf *bytes.Buffer) error <span class="cov8" title="1">{
+        if node == nil </span><span class="cov8" title="1">{
+                // Записываем специальное значение как маркер null
+                nullMarker := int32(-1 &lt;&lt; 31) // Минимальное значение int32
+                if err := binary.Write(buf, binary.LittleEndian, nullMarker); err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("ошибка записи маркера null: %w", err)
+                }</span>
+                <span class="cov8" title="1">return nil</span>
+        }
+
+        // Записываем значение узла
+        <span class="cov8" title="1">if err := binary.Write(buf, binary.LittleEndian, int32(node.val)); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("ошибка записи значения узла: %w", err)
+        }</span>
+
+        // Рекурсивно сериализуем левое и правое поддеревья
+        <span class="cov8" title="1">if err := t.serializePreOrderCompact(node.left, buf); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">if err := t.serializePreOrderCompact(node.right, buf); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// FromBinaryCompact десериализует дерево из компактного бинарного формата
+func (t *Tree) FromBinaryCompact(data []byte) error <span class="cov8" title="1">{
+        buf := bytes.NewReader(data)
+
+        // Вспомогательная функция для рекурсивного восстановления
+        var deserialize func() (*TNode, error)
+        deserialize = func() (*TNode, error) </span><span class="cov8" title="1">{
+                var val int32
+                if err := binary.Read(buf, binary.LittleEndian, &amp;val); err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("ошибка чтения значения: %w", err)
+                }</span>
+
+                // Проверяем маркер null
+                <span class="cov8" title="1">if val == -1&lt;&lt;31 </span><span class="cov8" title="1">{
+                        return nil, nil
+                }</span>
+
+                <span class="cov8" title="1">node := NewTNode(int(val))
+
+                left, err := deserialize()
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov8" title="1">node.left = left
+
+                right, err := deserialize()
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov8" title="1">node.right = right
+
+                return node, nil</span>
+        }
+
+        <span class="cov8" title="1">root, err := deserialize()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">t.root = root
+
+        return nil</span>
+}
+
+// SaveToBinaryCompact сохраняет дерево в компактный бинарный файл
+func (t *Tree) SaveToBinaryCompact(filename string) error <span class="cov8" title="1">{
+        data, err := t.ToBinaryCompact()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return os.WriteFile(filename, data, 0644)</span>
+}
+
+// LoadFromBinaryCompact загружает дерево из компактного бинарного файла
+func (t *Tree) LoadFromBinaryCompact(filename string) error <span class="cov8" title="1">{
+        data, err := os.ReadFile(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return t.FromBinaryCompact(data)</span>
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package structs
+
+import (
+        "bytes"
+        "encoding/binary"
+        "encoding/json"
+        "fmt"
+        "hash/fnv"
+        "io"
+        "os"
+        "strings"
+)
+
+type HashStatus int
+
+const (
+        EMPTY HashStatus = iota
+        DELETED
+        TAKEN
+)
+
+type HashEntry struct {
+        key    string
+        value  string
+        status HashStatus
+}
+
+func NewHashEntry() *HashEntry <span class="cov8" title="1">{
+        return &amp;HashEntry{
+                status: EMPTY,
+        }
+}</span>
+
+type OpenAddrHash struct {
+        buckets  []*HashEntry
+        size     int
+        capacity int
+}
+
+func NewOpenAddrHash() *OpenAddrHash <span class="cov8" title="1">{
+        capacity := 10
+        buckets := make([]*HashEntry, capacity)
+        for i := range buckets </span><span class="cov8" title="1">{
+                buckets[i] = NewHashEntry()
+        }</span>
+
+        <span class="cov8" title="1">return &amp;OpenAddrHash{
+                buckets:  buckets,
+                size:     0,
+                capacity: capacity,
+        }</span>
+}
+
+func NewOpenAddrHashWithCapacity(cap int) *OpenAddrHash <span class="cov8" title="1">{
+        if cap &lt;= 0 </span><span class="cov8" title="1">{
+                cap = 10
+        }</span>
+
+        <span class="cov8" title="1">buckets := make([]*HashEntry, cap)
+        for i := range buckets </span><span class="cov8" title="1">{
+                buckets[i] = NewHashEntry()
+        }</span>
+
+        <span class="cov8" title="1">return &amp;OpenAddrHash{
+                buckets:  buckets,
+                size:     0,
+                capacity: cap,
+        }</span>
+}
+
+func (h *OpenAddrHash) hashFunc(key string) uint32 <span class="cov8" title="1">{
+        hasher := fnv.New32a()
+        hasher.Write([]byte(key))
+        return hasher.Sum32() % uint32(h.capacity)
+}</span>
+
+func (h *OpenAddrHash) Put(key, value string) bool <span class="cov8" title="1">{
+        if h.size &gt;= h.capacity </span><span class="cov8" title="1">{
+                fmt.Println("Хеш-таблица переполнена")
+                return false
+        }</span>
+
+        <span class="cov8" title="1">hash := h.hashFunc(key)
+        deletedIndex := -1
+        i := 0
+
+        for i &lt; h.capacity </span><span class="cov8" title="1">{
+                index := (int(hash) + i) % h.capacity
+
+                if h.buckets[index].status == EMPTY </span><span class="cov8" title="1">{
+                        h.buckets[index].key = key
+                        h.buckets[index].value = value
+                        h.buckets[index].status = TAKEN
+                        h.size++
+                        return true
+                }</span>
+
+                <span class="cov8" title="1">if h.buckets[index].status == TAKEN &amp;&amp; h.buckets[index].key == key </span><span class="cov8" title="1">{
+                        h.buckets[index].value = value
+                        return true
+                }</span>
+
+                <span class="cov8" title="1">if deletedIndex == -1 &amp;&amp; h.buckets[index].status == DELETED </span><span class="cov8" title="1">{
+                        deletedIndex = index
+                }</span>
+                <span class="cov8" title="1">i++</span>
+        }
+
+        <span class="cov8" title="1">if deletedIndex != -1 </span><span class="cov8" title="1">{
+                h.buckets[deletedIndex].status = TAKEN
+                h.buckets[deletedIndex].key = key
+                h.buckets[deletedIndex].value = value
+                h.size++
+                return true
+        }</span>
+
+        <span class="cov0" title="0">return false</span>
+}
+
+func (h *OpenAddrHash) Get(key string) (string, bool) <span class="cov8" title="1">{
+        hash := h.hashFunc(key)
+        i := 0
+
+        for i &lt; h.capacity </span><span class="cov8" title="1">{
+                index := (int(hash) + i) % h.capacity
+
+                if h.buckets[index].status == EMPTY </span><span class="cov8" title="1">{
+                        return "", false
+                }</span>
+
+                <span class="cov8" title="1">if h.buckets[index].status == DELETED </span><span class="cov8" title="1">{
+                        i++
+                        continue</span>
+                }
+
+                <span class="cov8" title="1">if h.buckets[index].status == TAKEN &amp;&amp; h.buckets[index].key == key </span><span class="cov8" title="1">{
+                        return h.buckets[index].value, true
+                }</span>
+                <span class="cov8" title="1">i++</span>
+        }
+
+        <span class="cov8" title="1">return "", false</span>
+}
+
+func (h *OpenAddrHash) Remove(key string) bool <span class="cov8" title="1">{
+        hash := h.hashFunc(key)
+        i := 0
+
+        for i &lt; h.capacity </span><span class="cov8" title="1">{
+                index := (int(hash) + i) % h.capacity
+
+                if h.buckets[index].status == EMPTY </span><span class="cov8" title="1">{
+                        return false
+                }</span>
+
+                <span class="cov8" title="1">if h.buckets[index].status == TAKEN &amp;&amp; h.buckets[index].key == key </span><span class="cov8" title="1">{
+                        h.buckets[index].status = DELETED
+                        h.buckets[index].key = ""
+                        h.buckets[index].value = ""
+                        h.size--
+                        return true
+                }</span>
+                <span class="cov0" title="0">i++</span>
+        }
+
+        <span class="cov0" title="0">return false</span>
+}
+
+func (h *OpenAddrHash) Contains(key string) bool <span class="cov8" title="1">{
+        _, found := h.Get(key)
+        return found
+}</span>
+
+func (h *OpenAddrHash) Size() int <span class="cov8" title="1">{
+        return h.size
+}</span>
+
+func (h *OpenAddrHash) Capacity() int <span class="cov8" title="1">{
+        return h.capacity
+}</span>
+
+func (h *OpenAddrHash) IsEmpty() bool <span class="cov8" title="1">{
+        return h.size == 0
+}</span>
+
+func (h *OpenAddrHash) IsFull() bool <span class="cov8" title="1">{
+        return h.size &gt;= h.capacity
+}</span>
+
+func (h *OpenAddrHash) LoadFactor() float64 <span class="cov8" title="1">{
+        return float64(h.size) / float64(h.capacity)
+}</span>
+
+func (h *OpenAddrHash) Clear() <span class="cov8" title="1">{
+        for i := 0; i &lt; h.capacity; i++ </span><span class="cov8" title="1">{
+                h.buckets[i].status = EMPTY
+                h.buckets[i].key = ""
+                h.buckets[i].value = ""
+        }</span>
+        <span class="cov8" title="1">h.size = 0</span>
+}
+
+func (h *OpenAddrHash) Keys() []string <span class="cov8" title="1">{
+        keys := make([]string, 0, h.size)
+        for i := 0; i &lt; h.capacity; i++ </span><span class="cov8" title="1">{
+                if h.buckets[i].status == TAKEN </span><span class="cov8" title="1">{
+                        keys = append(keys, h.buckets[i].key)
+                }</span>
+        }
+        <span class="cov8" title="1">return keys</span>
+}
+
+func (h *OpenAddrHash) Values() []string <span class="cov8" title="1">{
+        values := make([]string, 0, h.size)
+        for i := 0; i &lt; h.capacity; i++ </span><span class="cov8" title="1">{
+                if h.buckets[i].status == TAKEN </span><span class="cov8" title="1">{
+                        values = append(values, h.buckets[i].value)
+                }</span>
+        }
+        <span class="cov8" title="1">return values</span>
+}
+
+func (h *OpenAddrHash) Print() <span class="cov8" title="1">{
+        for i := 0; i &lt; h.capacity; i++ </span><span class="cov8" title="1">{
+                fmt.Printf("[%d]: ", i)
+
+                switch h.buckets[i].status </span>{
+                case TAKEN:<span class="cov8" title="1">
+                        fmt.Printf("{%s: %s}\n", h.buckets[i].key, h.buckets[i].value)</span>
+                case DELETED:<span class="cov0" title="0">
+                        fmt.Println("DELETED")</span>
+                case EMPTY:<span class="cov8" title="1">
+                        fmt.Println("null")</span>
+                }
+        }
+        <span class="cov8" title="1">fmt.Println()</span>
+}
+
+func (h *OpenAddrHash) String() string <span class="cov8" title="1">{
+        var builder strings.Builder
+        builder.WriteString(fmt.Sprintf("OpenAddrHash (size: %d, capacity: %d, load factor: %.2f)\n",
+                h.size, h.capacity, h.LoadFactor()))
+
+        for i := 0; i &lt; h.capacity; i++ </span><span class="cov8" title="1">{
+                builder.WriteString(fmt.Sprintf("[%d]: ", i))
+
+                switch h.buckets[i].status </span>{
+                case TAKEN:<span class="cov8" title="1">
+                        builder.WriteString(fmt.Sprintf("{%s: %s}\n", h.buckets[i].key, h.buckets[i].value))</span>
+                case DELETED:<span class="cov0" title="0">
+                        builder.WriteString("DELETED\n")</span>
+                case EMPTY:<span class="cov8" title="1">
+                        builder.WriteString("null\n")</span>
+                }
+        }
+        <span class="cov8" title="1">return builder.String()</span>
+}
+
+func (h *OpenAddrHash) Rehash(newCapacity int) <span class="cov8" title="1">{
+        if newCapacity &lt;= h.capacity </span><span class="cov8" title="1">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">oldBuckets := h.buckets
+        oldCapacity := h.capacity
+
+        h.buckets = make([]*HashEntry, newCapacity)
+        for i := range h.buckets </span><span class="cov8" title="1">{
+                h.buckets[i] = NewHashEntry()
+        }</span>
+        <span class="cov8" title="1">h.capacity = newCapacity
+        h.size = 0
+
+        for i := 0; i &lt; oldCapacity; i++ </span><span class="cov8" title="1">{
+                if oldBuckets[i].status == TAKEN </span><span class="cov8" title="1">{
+                        h.Put(oldBuckets[i].key, oldBuckets[i].value)
+                }</span>
+        }
+}
+
+func (h *OpenAddrHash) AutoRehash(threshold float64) <span class="cov8" title="1">{
+        if h.LoadFactor() &gt; threshold </span><span class="cov8" title="1">{
+                newCapacity := h.capacity * 2
+                h.Rehash(newCapacity)
+        }</span>
+}
+
+// СЕРИАЛИЗАЦИЯ / ДЕСЕРИАЛИЗАЦИЯ
+
+// MarshalJSON реализует интерфейс json.Marshaler
+func (h *OpenAddrHash) MarshalJSON() ([]byte, error) <span class="cov8" title="1">{
+        type EntryJSON struct {
+                Key    string `json:"key"`
+                Value  string `json:"value"`
+                Status int    `json:"status"`
+        }
+
+        type HashTableJSON struct {
+                Capacity   int         `json:"capacity"`
+                Size       int         `json:"size"`
+                Entries    []EntryJSON `json:"entries"`
+                LoadFactor float64     `json:"load_factor"`
+        }
+
+        entries := make([]EntryJSON, 0, h.capacity)
+        for i := 0; i &lt; h.capacity; i++ </span><span class="cov8" title="1">{
+                entries = append(entries, EntryJSON{
+                        Key:    h.buckets[i].key,
+                        Value:  h.buckets[i].value,
+                        Status: int(h.buckets[i].status),
+                })
+        }</span>
+
+        <span class="cov8" title="1">hashTableJSON := HashTableJSON{
+                Capacity:   h.capacity,
+                Size:       h.size,
+                Entries:    entries,
+                LoadFactor: h.LoadFactor(),
+        }
+
+        return json.Marshal(hashTableJSON)</span>
+}
+
+// UnmarshalJSON реализует интерфейс json.Unmarshaler
+func (h *OpenAddrHash) UnmarshalJSON(data []byte) error <span class="cov8" title="1">{
+        type EntryJSON struct {
+                Key    string `json:"key"`
+                Value  string `json:"value"`
+                Status int    `json:"status"`
+        }
+
+        type HashTableJSON struct {
+                Capacity   int         `json:"capacity"`
+                Size       int         `json:"size"`
+                Entries    []EntryJSON `json:"entries"`
+                LoadFactor float64     `json:"load_factor"`
+        }
+
+        var hashTableJSON HashTableJSON
+        if err := json.Unmarshal(data, &amp;hashTableJSON); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">h.capacity = hashTableJSON.Capacity
+        h.size = 0
+        h.buckets = make([]*HashEntry, h.capacity)
+
+        for i := range h.buckets </span><span class="cov8" title="1">{
+                h.buckets[i] = NewHashEntry()
+        }</span>
+
+        <span class="cov8" title="1">for i, entry := range hashTableJSON.Entries </span><span class="cov8" title="1">{
+                h.buckets[i].key = entry.Key
+                h.buckets[i].value = entry.Value
+                h.buckets[i].status = HashStatus(entry.Status)
+
+                if h.buckets[i].status == TAKEN </span><span class="cov8" title="1">{
+                        h.size++
+                }</span>
+        }
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// ToJSON сериализует хеш-таблицу в JSON строку
+func (h *OpenAddrHash) ToJSON() (string, error) <span class="cov8" title="1">{
+        bytes, err := json.Marshal(h)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">return string(bytes), nil</span>
+}
+
+// FromJSON десериализует JSON строку в хеш-таблицу
+func (h *OpenAddrHash) FromJSON(jsonStr string) error <span class="cov8" title="1">{
+        return json.Unmarshal([]byte(jsonStr), h)
+}</span>
+
+// SaveToJSON сохраняет хеш-таблицу в JSON файл
+func (h *OpenAddrHash) SaveToJSON(filename string) error <span class="cov8" title="1">{
+        file, err := os.Create(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">defer file.Close()
+
+        encoder := json.NewEncoder(file)
+        encoder.SetIndent("", "    ")
+        return encoder.Encode(h)</span>
+}
+
+// LoadFromJSON загружает хеш-таблицу из JSON файла
+func (h *OpenAddrHash) LoadFromJSON(filename string) error <span class="cov8" title="1">{
+        file, err := os.Open(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">defer file.Close()
+
+        decoder := json.NewDecoder(file)
+        return decoder.Decode(h)</span>
+}
+
+// ToBinary сериализует хеш-таблицу в бинарный формат
+func (h *OpenAddrHash) ToBinary() ([]byte, error) <span class="cov8" title="1">{
+        var buf bytes.Buffer
+
+        if err := binary.Write(&amp;buf, binary.LittleEndian, int32(h.capacity)); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">if err := binary.Write(&amp;buf, binary.LittleEndian, int32(h.size)); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">for i := 0; i &lt; h.capacity; i++ </span><span class="cov8" title="1">{
+                entry := h.buckets[i]
+
+                if err := binary.Write(&amp;buf, binary.LittleEndian, int32(entry.status)); err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+
+                <span class="cov8" title="1">keyBytes := []byte(entry.key)
+                keyLen := int32(len(keyBytes))
+                if err := binary.Write(&amp;buf, binary.LittleEndian, keyLen); err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov8" title="1">if _, err := buf.Write(keyBytes); err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+
+                <span class="cov8" title="1">valueBytes := []byte(entry.value)
+                valueLen := int32(len(valueBytes))
+                if err := binary.Write(&amp;buf, binary.LittleEndian, valueLen); err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov8" title="1">if _, err := buf.Write(valueBytes); err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+        }
+
+        <span class="cov8" title="1">return buf.Bytes(), nil</span>
+}
+
+// FromBinary десериализует хеш-таблицу из бинарного формата
+func (h *OpenAddrHash) FromBinary(data []byte) error <span class="cov8" title="1">{
+        buf := bytes.NewReader(data)
+
+        var capacity, size int32
+        if err := binary.Read(buf, binary.LittleEndian, &amp;capacity); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">if err := binary.Read(buf, binary.LittleEndian, &amp;size); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">h.capacity = int(capacity)
+        h.size = 0
+        h.buckets = make([]*HashEntry, h.capacity)
+
+        for i := 0; i &lt; h.capacity; i++ </span><span class="cov8" title="1">{
+                h.buckets[i] = NewHashEntry()
+
+                var status int32
+                if err := binary.Read(buf, binary.LittleEndian, &amp;status); err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+                <span class="cov8" title="1">h.buckets[i].status = HashStatus(status)
+
+                var keyLen int32
+                if err := binary.Read(buf, binary.LittleEndian, &amp;keyLen); err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+                <span class="cov8" title="1">keyBytes := make([]byte, keyLen)
+                if _, err := io.ReadFull(buf, keyBytes); err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+                <span class="cov8" title="1">h.buckets[i].key = string(keyBytes)
+
+                var valueLen int32
+                if err := binary.Read(buf, binary.LittleEndian, &amp;valueLen); err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+                <span class="cov8" title="1">valueBytes := make([]byte, valueLen)
+                if _, err := io.ReadFull(buf, valueBytes); err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+                <span class="cov8" title="1">h.buckets[i].value = string(valueBytes)
+
+                if h.buckets[i].status == TAKEN </span><span class="cov8" title="1">{
+                        h.size++
+                }</span>
+        }
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// SaveToBinary сохраняет хеш-таблицу в бинарный файл
+func (h *OpenAddrHash) SaveToBinary(filename string) error <span class="cov8" title="1">{
+        data, err := h.ToBinary()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return os.WriteFile(filename, data, 0644)</span>
+}
+
+// LoadFromBinary загружает хеш-таблицу из бинарного файла
+func (h *OpenAddrHash) LoadFromBinary(filename string) error <span class="cov8" title="1">{
+        data, err := os.ReadFile(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return h.FromBinary(data)</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package structs
+
+import (
+        "bytes"
+        "encoding/binary"
+        "encoding/json"
+        "fmt"
+        "io"
+        "os"
+        "strings"
+)
+
+type QNode struct {
+        data string
+        next *QNode
+}
+
+func NewQNodeWithValue(value string) *QNode <span class="cov8" title="1">{
+        return &amp;QNode{
+                data: value,
+                next: nil,
+        }
+}</span>
+
+type Queue struct {
+        front *QNode
+        rear  *QNode
+        size  int
+}
+
+func NewQueue() *Queue <span class="cov8" title="1">{
+        return &amp;Queue{
+                front: nil,
+                rear:  nil,
+                size:  0,
+        }
+}</span>
+
+func (q *Queue) Length() int <span class="cov8" title="1">{
+        return q.size
+}</span>
+
+func (q *Queue) Enqueue(value string) <span class="cov8" title="1">{
+        newNode := NewQNodeWithValue(value)
+
+        if q.rear == nil </span><span class="cov8" title="1">{
+                q.front = newNode
+                q.rear = newNode
+        }</span> else<span class="cov8" title="1"> {
+                q.rear.next = newNode
+                q.rear = newNode
+        }</span>
+        <span class="cov8" title="1">q.size++</span>
+}
+
+func (q *Queue) Dequeue() string <span class="cov8" title="1">{
+        if q.front == nil </span><span class="cov8" title="1">{
+                return ""
+        }</span>
+
+        <span class="cov8" title="1">dequeuedElem := q.front.data
+        q.front = q.front.next
+
+        if q.front == nil </span><span class="cov8" title="1">{
+                q.rear = nil
+        }</span>
+
+        <span class="cov8" title="1">q.size--
+        return dequeuedElem</span>
+}
+
+func (q *Queue) Peek() string <span class="cov8" title="1">{
+        if q.front == nil </span><span class="cov0" title="0">{
+                return ""
+        }</span>
+        <span class="cov8" title="1">return q.front.data</span>
+}
+
+func (q *Queue) IsEmpty() bool <span class="cov8" title="1">{
+        return q.front == nil
+}</span>
+
+func (q *Queue) Clear() <span class="cov8" title="1">{
+        for q.front != nil </span><span class="cov8" title="1">{
+                q.Dequeue()
+        }</span>
+}
+
+func (q *Queue) Print() <span class="cov8" title="1">{
+        if q.front == nil </span><span class="cov8" title="1">{
+                fmt.Println("Очередь пустая")
+                return
+        }</span>
+
+        <span class="cov8" title="1">current := q.front
+        var elements []string
+
+        for current != nil </span><span class="cov8" title="1">{
+                elements = append(elements, current.data)
+                current = current.next
+        }</span>
+
+        <span class="cov8" title="1">fmt.Println(strings.Join(elements, " "))</span>
+}
+
+func (q *Queue) String() string <span class="cov8" title="1">{
+        if q.front == nil </span><span class="cov8" title="1">{
+                return "Очередь пустая"
+        }</span>
+
+        <span class="cov8" title="1">current := q.front
+        var elements []string
+
+        for current != nil </span><span class="cov8" title="1">{
+                elements = append(elements, current.data)
+                current = current.next
+        }</span>
+
+        <span class="cov8" title="1">return "front -&gt; " + strings.Join(elements, " -&gt; ") + " -&gt; rear"</span>
+}
+
+// ToSlice преобразует очередь в слайс (для сериализации)
+func (q *Queue) ToSlice() []string <span class="cov8" title="1">{
+        result := make([]string, 0, q.size)
+        current := q.front
+
+        for current != nil </span><span class="cov8" title="1">{
+                result = append(result, current.data)
+                current = current.next
+        }</span>
+
+        <span class="cov8" title="1">return result</span>
+}
+
+// FromSlice создает очередь из слайса
+func (q *Queue) FromSlice(elements []string) <span class="cov8" title="1">{
+        q.Clear() // Очищаем текущую очередь
+        for _, elem := range elements </span><span class="cov8" title="1">{
+                q.Enqueue(elem)
+        }</span>
+}
+
+// MarshalJSON реализует интерфейс json.Marshaler
+func (q *Queue) MarshalJSON() ([]byte, error) <span class="cov8" title="1">{
+        type QueueJSON struct {
+                Elements []string `json:"elements"`
+                Size     int      `json:"size"`
+                Front    string   `json:"front,omitempty"`
+                Rear     string   `json:"rear,omitempty"`
+        }
+
+        queueJSON := QueueJSON{
+                Elements: q.ToSlice(),
+                Size:     q.size,
+        }
+
+        if q.front != nil </span><span class="cov8" title="1">{
+                queueJSON.Front = q.front.data
+        }</span>
+        <span class="cov8" title="1">if q.rear != nil </span><span class="cov8" title="1">{
+                queueJSON.Rear = q.rear.data
+        }</span>
+
+        <span class="cov8" title="1">return json.Marshal(queueJSON)</span>
+}
+
+// UnmarshalJSON реализует интерфейс json.Unmarshaler
+func (q *Queue) UnmarshalJSON(data []byte) error <span class="cov8" title="1">{
+        type QueueJSON struct {
+                Elements []string `json:"elements"`
+                Size     int      `json:"size"`
+                Front    string   `json:"front,omitempty"`
+                Rear     string   `json:"rear,omitempty"`
+        }
+
+        var queueJSON QueueJSON
+        if err := json.Unmarshal(data, &amp;queueJSON); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">q.FromSlice(queueJSON.Elements)
+        return nil</span>
+}
+
+// ToJSON сериализует очередь в JSON строку
+func (q *Queue) ToJSON() (string, error) <span class="cov8" title="1">{
+        bytes, err := json.Marshal(q)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">return string(bytes), nil</span>
+}
+
+// FromJSON десериализует JSON строку в очередь
+func (q *Queue) FromJSON(jsonStr string) error <span class="cov8" title="1">{
+        return json.Unmarshal([]byte(jsonStr), q)
+}</span>
+
+// SaveToJSON сохраняет очередь в JSON файл
+func (q *Queue) SaveToJSON(filename string) error <span class="cov8" title="1">{
+        file, err := os.Create(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">defer file.Close()
+
+        encoder := json.NewEncoder(file)
+        encoder.SetIndent("", "    ")
+        return encoder.Encode(q)</span>
+}
+
+// LoadFromJSON загружает очередь из JSON файла
+func (q *Queue) LoadFromJSON(filename string) error <span class="cov8" title="1">{
+        file, err := os.Open(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">defer file.Close()
+
+        decoder := json.NewDecoder(file)
+        return decoder.Decode(q)</span>
+}
+
+// ToBinary сериализует очередь в бинарный формат
+func (q *Queue) ToBinary() ([]byte, error) <span class="cov8" title="1">{
+        var buf bytes.Buffer
+
+        size := int32(q.size)
+        if err := binary.Write(&amp;buf, binary.LittleEndian, size); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("ошибка записи размера очереди: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">current := q.front
+        for current != nil </span><span class="cov8" title="1">{
+                strBytes := []byte(current.data)
+                strLen := int32(len(strBytes))
+
+                if err := binary.Write(&amp;buf, binary.LittleEndian, strLen); err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("ошибка записи длины строки: %w", err)
+                }</span>
+
+                <span class="cov8" title="1">if _, err := buf.Write(strBytes); err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("ошибка записи данных строки: %w", err)
+                }</span>
+
+                <span class="cov8" title="1">current = current.next</span>
+        }
+
+        <span class="cov8" title="1">return buf.Bytes(), nil</span>
+}
+
+// FromBinary десериализует очередь из бинарного формата
+func (q *Queue) FromBinary(data []byte) error <span class="cov8" title="1">{
+        buf := bytes.NewReader(data)
+
+        var size int32
+        if err := binary.Read(buf, binary.LittleEndian, &amp;size); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("ошибка чтения размера очереди: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">q.Clear()
+
+        for i := 0; i &lt; int(size); i++ </span><span class="cov8" title="1">{
+                var strLen int32
+                if err := binary.Read(buf, binary.LittleEndian, &amp;strLen); err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("ошибка чтения длины строки %d: %w", i, err)
+                }</span>
+
+                <span class="cov8" title="1">strBytes := make([]byte, strLen)
+                if _, err := io.ReadFull(buf, strBytes); err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("ошибка чтения данных строки %d: %w", i, err)
+                }</span>
+
+                <span class="cov8" title="1">q.Enqueue(string(strBytes))</span>
+        }
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// SaveToBinary сохраняет очередь в бинарный файл
+func (q *Queue) SaveToBinary(filename string) error <span class="cov8" title="1">{
+        data, err := q.ToBinary()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return os.WriteFile(filename, data, 0644)</span>
+}
+
+// LoadFromBinary загружает очередь из бинарного файла
+func (q *Queue) LoadFromBinary(filename string) error <span class="cov8" title="1">{
+        data, err := os.ReadFile(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return q.FromBinary(data)</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package structs
+
+import (
+        "bytes"
+        "encoding/binary"
+        "encoding/json"
+        "fmt"
+        "io"
+        "os"
+        "strings"
+)
+
+type FNode struct {
+        val  string
+        next *FNode
+}
+
+func NewFNode(value string) *FNode <span class="cov8" title="1">{
+        return &amp;FNode{
+                val:  value,
+                next: nil,
+        }
+}</span>
+
+type SinglyLinkedList struct {
+        head *FNode
+}
+
+func NewSinglyLinkedList() *SinglyLinkedList <span class="cov8" title="1">{
+        return &amp;SinglyLinkedList{
+                head: nil,
+        }
+}</span>
+
+func (s *SinglyLinkedList) InsertAtHead(val string) <span class="cov8" title="1">{
+        newNode := NewFNode(val)
+        newNode.next = s.head
+        s.head = newNode
+}</span>
+
+func (s *SinglyLinkedList) InsertAtTail(val string) <span class="cov8" title="1">{
+        newNode := NewFNode(val)
+
+        if s.head == nil </span><span class="cov8" title="1">{
+                s.head = newNode
+                return
+        }</span>
+
+        <span class="cov8" title="1">tmp := s.head
+        for tmp.next != nil </span><span class="cov8" title="1">{
+                tmp = tmp.next
+        }</span>
+        <span class="cov8" title="1">tmp.next = newNode</span>
+}
+
+func (s *SinglyLinkedList) InsertBefore(target string, val string) error <span class="cov8" title="1">{
+        if s.head == nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("список пустой, вставка невозможна")
+        }</span>
+
+        <span class="cov8" title="1">if s.head.val == target </span><span class="cov8" title="1">{
+                s.InsertAtHead(val)
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">curr := s.head
+        for curr.next != nil &amp;&amp; curr.next.val != target </span><span class="cov8" title="1">{
+                curr = curr.next
+        }</span>
+
+        <span class="cov8" title="1">if curr.next != nil &amp;&amp; curr.next.val == target </span><span class="cov8" title="1">{
+                newNode := NewFNode(val)
+                newNode.next = curr.next
+                curr.next = newNode
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">return fmt.Errorf("заданное значение '%s' не найдено", target)</span>
+}
+
+func (s *SinglyLinkedList) InsertAfter(target string, val string) error <span class="cov8" title="1">{
+        if s.head == nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("список пустой, вставка невозможна")
+        }</span>
+
+        <span class="cov8" title="1">curr := s.head
+        for curr != nil &amp;&amp; curr.val != target </span><span class="cov8" title="1">{
+                curr = curr.next
+        }</span>
+
+        <span class="cov8" title="1">if curr != nil &amp;&amp; curr.val == target </span><span class="cov8" title="1">{
+                newNode := NewFNode(val)
+                newNode.next = curr.next
+                curr.next = newNode
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">return fmt.Errorf("заданное значение '%s' не найдено", target)</span>
+}
+
+func (s *SinglyLinkedList) DeleteHead() error <span class="cov8" title="1">{
+        if s.head == nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("список пуст")
+        }</span>
+
+        <span class="cov8" title="1">s.head = s.head.next
+        return nil</span>
+}
+
+func (s *SinglyLinkedList) DeleteTail() error <span class="cov8" title="1">{
+        if s.head == nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("список пуст")
+        }</span>
+
+        <span class="cov8" title="1">if s.head.next == nil </span><span class="cov8" title="1">{
+                s.head = nil
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">curr := s.head
+        for curr.next != nil &amp;&amp; curr.next.next != nil </span><span class="cov0" title="0">{
+                curr = curr.next
+        }</span>
+
+        <span class="cov8" title="1">curr.next = nil
+        return nil</span>
+}
+
+func (s *SinglyLinkedList) DeleteBefore(target string) error <span class="cov8" title="1">{
+        if s.head == nil || s.head.next == nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("недостаточно элементов для удаления")
+        }</span>
+
+        <span class="cov8" title="1">if s.head.next.val == target </span><span class="cov0" title="0">{
+                return s.DeleteHead()
+        }</span>
+
+        <span class="cov8" title="1">curr := s.head
+        for curr.next != nil &amp;&amp; curr.next.next != nil &amp;&amp; curr.next.next.val != target </span><span class="cov0" title="0">{
+                curr = curr.next
+        }</span>
+
+        <span class="cov8" title="1">if curr.next != nil &amp;&amp; curr.next.next != nil &amp;&amp; curr.next.next.val == target </span><span class="cov8" title="1">{
+                curr.next = curr.next.next
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">return fmt.Errorf("заданное значение '%s' не найдено", target)</span>
+}
+
+func (s *SinglyLinkedList) DeleteAfter(target string) error <span class="cov8" title="1">{
+        if s.head == nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("список пустой, удаление невозможно")
+        }</span>
+
+        <span class="cov8" title="1">curr := s.head
+        for curr != nil &amp;&amp; curr.val != target </span><span class="cov8" title="1">{
+                curr = curr.next
+        }</span>
+
+        <span class="cov8" title="1">if curr != nil &amp;&amp; curr.next != nil </span><span class="cov8" title="1">{
+                curr.next = curr.next.next
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">if curr != nil &amp;&amp; curr.next == nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("нет элемента после '%s'", target)
+        }</span>
+
+        <span class="cov8" title="1">return fmt.Errorf("заданное значение '%s' не найдено", target)</span>
+}
+
+func (s *SinglyLinkedList) DeleteByValue(target string) error <span class="cov8" title="1">{
+        if s.head == nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("список пуст")
+        }</span>
+
+        <span class="cov8" title="1">if s.head.val == target </span><span class="cov8" title="1">{
+                return s.DeleteHead()
+        }</span>
+
+        <span class="cov8" title="1">curr := s.head
+        for curr.next != nil &amp;&amp; curr.next.val != target </span><span class="cov0" title="0">{
+                curr = curr.next
+        }</span>
+
+        <span class="cov8" title="1">if curr.next != nil &amp;&amp; curr.next.val == target </span><span class="cov8" title="1">{
+                curr.next = curr.next.next
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">return fmt.Errorf("заданное значение '%s' отсутствует в списке", target)</span>
+}
+
+func (s *SinglyLinkedList) SearchByValue(target string) int <span class="cov8" title="1">{
+        if s.head == nil </span><span class="cov8" title="1">{
+                return -1
+        }</span>
+
+        <span class="cov8" title="1">curr := s.head
+        targetIndex := 0
+
+        for curr != nil </span><span class="cov8" title="1">{
+                if curr.val == target </span><span class="cov8" title="1">{
+                        return targetIndex
+                }</span>
+                <span class="cov8" title="1">curr = curr.next
+                targetIndex++</span>
+        }
+        <span class="cov8" title="1">return -1</span>
+}
+
+func (s *SinglyLinkedList) Length() int <span class="cov8" title="1">{
+        count := 0
+        curr := s.head
+
+        for curr != nil </span><span class="cov8" title="1">{
+                count++
+                curr = curr.next
+        }</span>
+        <span class="cov8" title="1">return count</span>
+}
+
+func (s *SinglyLinkedList) IsEmpty() bool <span class="cov8" title="1">{
+        return s.head == nil
+}</span>
+
+func (s *SinglyLinkedList) GetHead() string <span class="cov8" title="1">{
+        if s.head == nil </span><span class="cov8" title="1">{
+                return ""
+        }</span>
+        <span class="cov8" title="1">return s.head.val</span>
+}
+
+func (s *SinglyLinkedList) Print() <span class="cov8" title="1">{
+        if s.head == nil </span><span class="cov8" title="1">{
+                fmt.Println("Список пуст")
+                return
+        }</span>
+
+        <span class="cov8" title="1">var elements []string
+        curr := s.head
+
+        for curr != nil </span><span class="cov8" title="1">{
+                elements = append(elements, curr.val)
+                curr = curr.next
+        }</span>
+
+        <span class="cov8" title="1">fmt.Println(strings.Join(elements, " "))</span>
+}
+
+func (s *SinglyLinkedList) String() string <span class="cov8" title="1">{
+        if s.head == nil </span><span class="cov8" title="1">{
+                return "Список пуст"
+        }</span>
+
+        <span class="cov8" title="1">var elements []string
+        curr := s.head
+
+        for curr != nil </span><span class="cov8" title="1">{
+                elements = append(elements, curr.val)
+                curr = curr.next
+        }</span>
+
+        <span class="cov8" title="1">return "head -&gt; " + strings.Join(elements, " -&gt; ") + " -&gt; tail"</span>
+}
+
+func (s *SinglyLinkedList) ToSlice() []string <span class="cov8" title="1">{
+        var result []string
+        curr := s.head
+
+        for curr != nil </span><span class="cov8" title="1">{
+                result = append(result, curr.val)
+                curr = curr.next
+        }</span>
+
+        <span class="cov8" title="1">return result</span>
+}
+
+func (s *SinglyLinkedList) Clear() <span class="cov8" title="1">{
+        s.head = nil
+}</span>
+
+// MarshalJSON реализует интерфейс json.Marshaler
+func (s *SinglyLinkedList) MarshalJSON() ([]byte, error) <span class="cov8" title="1">{
+        type LinkedListJSON struct {
+                Elements []string `json:"elements"`
+                Size     int      `json:"size"`
+                Head     string   `json:"head,omitempty"`
+                Tail     string   `json:"tail,omitempty"`
+        }
+
+        // Получаем все элементы
+        elements := s.ToSlice()
+
+        // Получаем хвост (последний элемент)
+        var tail string
+        if len(elements) &gt; 0 </span><span class="cov8" title="1">{
+                tail = elements[len(elements)-1]
+        }</span>
+
+        <span class="cov8" title="1">linkedListJSON := LinkedListJSON{
+                Elements: elements,
+                Size:     s.Length(),
+        }
+
+        if s.head != nil </span><span class="cov8" title="1">{
+                linkedListJSON.Head = s.head.val
+                linkedListJSON.Tail = tail
+        }</span>
+
+        <span class="cov8" title="1">return json.Marshal(linkedListJSON)</span>
+}
+
+// UnmarshalJSON реализует интерфейс json.Unmarshaler
+func (s *SinglyLinkedList) UnmarshalJSON(data []byte) error <span class="cov8" title="1">{
+        type LinkedListJSON struct {
+                Elements []string `json:"elements"`
+                Size     int      `json:"size"`
+                Head     string   `json:"head,omitempty"`
+                Tail     string   `json:"tail,omitempty"`
+        }
+
+        var linkedListJSON LinkedListJSON
+        if err := json.Unmarshal(data, &amp;linkedListJSON); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        // Очищаем список и добавляем элементы по порядку
+        <span class="cov8" title="1">s.Clear()
+        for _, elem := range linkedListJSON.Elements </span><span class="cov8" title="1">{
+                s.InsertAtTail(elem)
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// ToJSON сериализует список в JSON строку
+func (s *SinglyLinkedList) ToJSON() (string, error) <span class="cov8" title="1">{
+        bytes, err := json.Marshal(s)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">return string(bytes), nil</span>
+}
+
+// FromJSON десериализует JSON строку в список
+func (s *SinglyLinkedList) FromJSON(jsonStr string) error <span class="cov8" title="1">{
+        return json.Unmarshal([]byte(jsonStr), s)
+}</span>
+
+// SaveToJSON сохраняет список в JSON файл
+func (s *SinglyLinkedList) SaveToJSON(filename string) error <span class="cov8" title="1">{
+        file, err := os.Create(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">defer file.Close()
+
+        encoder := json.NewEncoder(file)
+        encoder.SetIndent("", "    ")
+        return encoder.Encode(s)</span>
+}
+
+// LoadFromJSON загружает список из JSON файла
+func (s *SinglyLinkedList) LoadFromJSON(filename string) error <span class="cov8" title="1">{
+        file, err := os.Open(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">defer file.Close()
+
+        decoder := json.NewDecoder(file)
+        return decoder.Decode(s)</span>
+}
+
+// ToBinary сериализует список в бинарный формат
+func (s *SinglyLinkedList) ToBinary() ([]byte, error) <span class="cov8" title="1">{
+        var buf bytes.Buffer
+
+        // 1. Записываем размер списка
+        size := int32(s.Length())
+        if err := binary.Write(&amp;buf, binary.LittleEndian, size); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("ошибка записи размера списка: %w", err)
+        }</span>
+
+        // 2. Записываем каждый элемент (в порядке от head к tail)
+        <span class="cov8" title="1">current := s.head
+        for current != nil </span><span class="cov8" title="1">{
+                strBytes := []byte(current.val)
+                strLen := int32(len(strBytes))
+
+                // Записываем длину строки
+                if err := binary.Write(&amp;buf, binary.LittleEndian, strLen); err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("ошибка записи длины строки: %w", err)
+                }</span>
+
+                // Записываем байты строки
+                <span class="cov8" title="1">if _, err := buf.Write(strBytes); err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("ошибка записи данных строки: %w", err)
+                }</span>
+
+                <span class="cov8" title="1">current = current.next</span>
+        }
+
+        <span class="cov8" title="1">return buf.Bytes(), nil</span>
+}
+
+// FromBinary десериализует список из бинарного формата
+func (s *SinglyLinkedList) FromBinary(data []byte) error <span class="cov8" title="1">{
+        buf := bytes.NewReader(data)
+
+        // 1. Считываем размер списка
+        var size int32
+        if err := binary.Read(buf, binary.LittleEndian, &amp;size); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("ошибка чтения размера списка: %w", err)
+        }</span>
+
+        // 2. Очищаем текущий список
+        <span class="cov8" title="1">s.Clear()
+
+        // 3. Считываем каждый элемент
+        for i := 0; i &lt; int(size); i++ </span><span class="cov8" title="1">{
+                // Считываем длину строки
+                var strLen int32
+                if err := binary.Read(buf, binary.LittleEndian, &amp;strLen); err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("ошибка чтения длины строки %d: %w", i, err)
+                }</span>
+
+                // Считываем байты строки
+                <span class="cov8" title="1">strBytes := make([]byte, strLen)
+                if _, err := io.ReadFull(buf, strBytes); err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("ошибка чтения данных строки %d: %w", i, err)
+                }</span>
+
+                // Добавляем элемент в конец списка
+                <span class="cov8" title="1">s.InsertAtTail(string(strBytes))</span>
+        }
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// SaveToBinary сохраняет список в бинарный файл
+func (s *SinglyLinkedList) SaveToBinary(filename string) error <span class="cov8" title="1">{
+        data, err := s.ToBinary()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return os.WriteFile(filename, data, 0644)</span>
+}
+
+// LoadFromBinary загружает список из бинарного файла
+func (s *SinglyLinkedList) LoadFromBinary(filename string) error <span class="cov8" title="1">{
+        data, err := os.ReadFile(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return s.FromBinary(data)</span>
+}
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package structs
+
+import (
+        "bytes"
+        "encoding/binary"
+        "encoding/json"
+        "fmt"
+        "io"
+        "os"
+        "strings"
+)
+
+type SNode struct {
+        val  string
+        next *SNode
+}
+
+func NewSNode(value string) *SNode <span class="cov8" title="1">{
+        return &amp;SNode{
+                val:  value,
+                next: nil,
+        }
+}</span>
+
+type Stack struct {
+        head *SNode
+}
+
+func NewStack() *Stack <span class="cov8" title="1">{
+        return &amp;Stack{
+                head: nil,
+        }
+}</span>
+
+func NewStackWithCapacity(capacity int) *Stack <span class="cov8" title="1">{
+        return &amp;Stack{
+                head: nil,
+        }
+}</span>
+
+func (s *Stack) Push(val string) <span class="cov8" title="1">{
+        newNode := NewSNode(val)
+        newNode.next = s.head
+        s.head = newNode
+}</span>
+
+func (s *Stack) Pop() string <span class="cov8" title="1">{
+        if s.head == nil </span><span class="cov8" title="1">{
+                return ""
+        }</span>
+
+        <span class="cov8" title="1">deleteNode := s.head
+        poppedElem := deleteNode.val
+
+        s.head = s.head.next
+
+        return poppedElem</span>
+}
+
+func (s *Stack) Top() string <span class="cov8" title="1">{
+        if s.head == nil </span><span class="cov8" title="1">{
+                return ""
+        }</span>
+        <span class="cov8" title="1">return s.head.val</span>
+}
+
+func (s *Stack) IsEmpty() bool <span class="cov8" title="1">{
+        return s.head == nil
+}</span>
+
+func (s *Stack) Print() <span class="cov8" title="1">{
+        curr := s.head
+
+        fmt.Print("top -&gt; ")
+        for curr != nil </span><span class="cov8" title="1">{
+                fmt.Print(curr.val)
+                if curr.next != nil </span><span class="cov8" title="1">{
+                        fmt.Print(" -&gt; ")
+                }</span>
+                <span class="cov8" title="1">curr = curr.next</span>
+        }
+        <span class="cov8" title="1">fmt.Println(" -&gt; bottom")</span>
+}
+
+func (s *Stack) String() string <span class="cov8" title="1">{
+        if s.head == nil </span><span class="cov8" title="1">{
+                return "top -&gt; bottom"
+        }</span>
+
+        <span class="cov8" title="1">var elements []string
+        curr := s.head
+        for curr != nil </span><span class="cov8" title="1">{
+                elements = append(elements, curr.val)
+                curr = curr.next
+        }</span>
+
+        <span class="cov8" title="1">return "top -&gt; " + strings.Join(elements, " -&gt; ") + " -&gt; bottom"</span>
+}
+
+// Size возвращает количество элементов в стеке
+func (s *Stack) Size() int <span class="cov8" title="1">{
+        count := 0
+        curr := s.head
+        for curr != nil </span><span class="cov8" title="1">{
+                count++
+                curr = curr.next
+        }</span>
+        <span class="cov8" title="1">return count</span>
+}
+
+// ToSlice преобразует стек в слайс (для сериализации)
+func (s *Stack) ToSlice() []string <span class="cov8" title="1">{
+        var result []string
+        curr := s.head
+        for curr != nil </span><span class="cov8" title="1">{
+                result = append(result, curr.val)
+                curr = curr.next
+        }</span>
+        <span class="cov8" title="1">return result</span>
+}
+
+// FromSlice создает стек из слайса
+func (s *Stack) FromSlice(elements []string) <span class="cov8" title="1">{
+        s.head = nil
+        for i := len(elements) - 1; i &gt;= 0; i-- </span><span class="cov8" title="1">{
+                s.Push(elements[i])
+        }</span>
+}
+
+// MarshalJSON реализует интерфейс json.Marshaler
+func (s *Stack) MarshalJSON() ([]byte, error) <span class="cov8" title="1">{
+        type StackJSON struct {
+                Elements []string `json:"elements"`
+                Size     int      `json:"size"`
+        }
+
+        stackJSON := StackJSON{
+                Elements: s.ToSlice(),
+                Size:     s.Size(),
+        }
+
+        return json.Marshal(stackJSON)
+}</span>
+
+// UnmarshalJSON реализует интерфейс json.Unmarshaler
+func (s *Stack) UnmarshalJSON(data []byte) error <span class="cov8" title="1">{
+        type StackJSON struct {
+                Elements []string `json:"elements"`
+                Size     int      `json:"size"`
+        }
+
+        var stackJSON StackJSON
+        if err := json.Unmarshal(data, &amp;stackJSON); err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">s.FromSlice(stackJSON.Elements)
+        return nil</span>
+}
+
+// ToJSON сериализует стек в JSON строку
+func (s *Stack) ToJSON() (string, error) <span class="cov8" title="1">{
+        bytes, err := json.Marshal(s)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">return string(bytes), nil</span>
+}
+
+// FromJSON десериализует JSON строку в стек
+func (s *Stack) FromJSON(jsonStr string) error <span class="cov8" title="1">{
+        return json.Unmarshal([]byte(jsonStr), s)
+}</span>
+
+// SaveToJSON сохраняет стек в JSON файл
+func (s *Stack) SaveToJSON(filename string) error <span class="cov8" title="1">{
+        file, err := os.Create(filename)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">defer file.Close()
+
+        encoder := json.NewEncoder(file)
+        encoder.SetIndent("", "    ")
+        return encoder.Encode(s)</span>
+}
+
+// LoadFromJSON загружает стек из JSON файла
+func (s *Stack) LoadFromJSON(filename string) error <span class="cov8" title="1">{
+        file, err := os.Open(filename)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        <span class="cov8" title="1">defer file.Close()
+
+        decoder := json.NewDecoder(file)
+        return decoder.Decode(s)</span>
+}
+
+// ToBinary сериализует стек в бинарный формат
+func (s *Stack) ToBinary() ([]byte, error) <span class="cov8" title="1">{
+        var buf bytes.Buffer
+
+        size := int32(s.Size())
+        if err := binary.Write(&amp;buf, binary.LittleEndian, size); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("ошибка записи размера стека: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">curr := s.head
+        for curr != nil </span><span class="cov8" title="1">{
+                strBytes := []byte(curr.val)
+                strLen := int32(len(strBytes))
+
+                if err := binary.Write(&amp;buf, binary.LittleEndian, strLen); err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+
+                <span class="cov8" title="1">if _, err := buf.Write(strBytes); err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("ошибка записи данных строки: %w", err)
+                }</span>
+
+                <span class="cov8" title="1">curr = curr.next</span>
+        }
+
+        <span class="cov8" title="1">return buf.Bytes(), nil</span>
+}
+
+// FromBinary десериализует стек из бинарного формата
+func (s *Stack) FromBinary(data []byte) error <span class="cov8" title="1">{
+        buf := bytes.NewReader(data)
+
+        var size int32
+        if err := binary.Read(buf, binary.LittleEndian, &amp;size); err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("ошибка чтения размера стека: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">elements := make([]string, 0, size)
+
+        for i := 0; i &lt; int(size); i++ </span><span class="cov8" title="1">{
+                var strLen int32
+                if err := binary.Read(buf, binary.LittleEndian, &amp;strLen); err != nil </span><span class="cov8" title="1">{
+                        if err == io.EOF </span><span class="cov8" title="1">{
+                                return fmt.Errorf("неожиданный конец данных при чтении длины строки %d. Ожидалось %d элементов", i, size)
+                        }</span>
+                        <span class="cov0" title="0">return fmt.Errorf("ошибка чтения длины строки %d: %w", i, err)</span>
+                }
+
+                <span class="cov8" title="1">strBytes := make([]byte, strLen)
+                if _, err := io.ReadFull(buf, strBytes); err != nil </span><span class="cov0" title="0">{
+                        if err == io.EOF || err == io.ErrUnexpectedEOF </span><span class="cov0" title="0">{
+                                return fmt.Errorf("недостаточно данных для чтения строки %d длиной %d байт", i, strLen)
+                        }</span>
+                        <span class="cov0" title="0">return fmt.Errorf("ошибка чтения данных строки %d: %w", i, err)</span>
+                }
+
+                <span class="cov8" title="1">elements = append(elements, string(strBytes))</span>
+        }
+
+        <span class="cov8" title="1">s.head = nil
+        for i := len(elements) - 1; i &gt;= 0; i-- </span><span class="cov8" title="1">{
+                s.Push(elements[i])
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// SaveToBinary сохраняет стек в бинарный файл
+func (s *Stack) SaveToBinary(filename string) error <span class="cov8" title="1">{
+        data, err := s.ToBinary()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return os.WriteFile(filename, data, 0644)</span>
+}
+
+// LoadFromBinary загружает стек из бинарного файла
+func (s *Stack) LoadFromBinary(filename string) error <span class="cov8" title="1">{
+        data, err := os.ReadFile(filename)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return s.FromBinary(data)</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
